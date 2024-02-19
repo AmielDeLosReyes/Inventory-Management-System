@@ -15,6 +15,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
  * Instruction: navigate to http://localhost:8080/swagger-ui.html to see the documentation
  *
  * @author Amiel De Los Reyes
+ * @date 02/20/2024
  */
 @Configuration
 public class OpenAPIConfig {
