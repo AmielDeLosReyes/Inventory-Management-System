@@ -13,6 +13,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
  * Configuration class for OpenAPI documentation.
  *
  * Instruction: navigate to http://localhost:8080/swagger-ui.html to see the documentation
+ *
  * @author Amiel De Los Reyes
  */
 @Configuration
@@ -20,6 +21,7 @@ public class OpenAPIConfig {
 
     /**
      * Defines custom OpenAPI documentation.
+     *
      *
      * @return OpenAPI instance with custom information.
      */
