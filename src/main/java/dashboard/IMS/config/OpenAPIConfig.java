@@ -22,7 +22,6 @@ public class OpenAPIConfig {
     /**
      * Defines custom OpenAPI documentation.
      *
-     *
      * @return OpenAPI instance with custom information.
      */
     @Bean
