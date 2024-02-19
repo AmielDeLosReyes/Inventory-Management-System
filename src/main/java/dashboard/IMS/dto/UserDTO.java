@@ -4,6 +4,13 @@ import lombok.*;
 
 import java.sql.Timestamp;
 
+/**
+ * Data Transfer Object (DTO) class for User.
+ * Represents user data to be transferred between layers of the application.
+ *
+ * @author Amiel De Los Reyes
+ * @date 02/20/2024
+ */
 @Getter
 @Setter
 @NoArgsConstructor

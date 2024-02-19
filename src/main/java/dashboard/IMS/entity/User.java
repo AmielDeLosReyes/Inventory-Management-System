@@ -5,6 +5,13 @@ import lombok.*;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
+/**
+ * Entity class for User.
+ * Represents user data stored in the database.
+ *
+ * @author Amiel De Los Reyes
+ * @date 02/20/2024
+ */
 @Entity
 @Getter
 @Setter
@@ -39,4 +46,3 @@ public class User {
     @Column(nullable = false)
     private String roles;
 }
-

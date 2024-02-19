@@ -2,6 +2,13 @@ package dashboard.IMS.dto;
 
 import lombok.*;
 
+/**
+ * Data Transfer Object (DTO) class for Product Variation.
+ * Represents product variation data to be transferred between layers of the application.
+ *
+ * @author Amiel De Los Reyes
+ * @date 02/20/2024
+ */
 @Getter
 @Setter
 @Builder

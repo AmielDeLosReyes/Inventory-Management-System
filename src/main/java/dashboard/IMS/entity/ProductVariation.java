@@ -4,6 +4,13 @@ import lombok.*;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity class for Product Variation.
+ * Represents product variation data stored in the database.
+ *
+ * @author Amiel De Los Reyes
+ * @date 02/20/2024
+ */
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

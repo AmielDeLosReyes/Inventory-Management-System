@@ -5,6 +5,13 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Entity class for Product.
+ * Represents product data stored in the database.
+ *
+ * @author Amiel De Los Reyes
+ * @date 02/20/2024
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,4 +39,3 @@ public class Product {
     @Column(name = "image_urls", columnDefinition = "JSON")
     private String imageUrls;
 }
-

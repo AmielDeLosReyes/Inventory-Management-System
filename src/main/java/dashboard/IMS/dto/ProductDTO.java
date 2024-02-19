@@ -4,6 +4,13 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Data Transfer Object (DTO) class for Product.
+ * Represents product data to be transferred between layers of the application.
+ *
+ * @author Amiel De Los Reyes
+ * @date 02/20/2024
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,4 +24,3 @@ public class ProductDTO {
     private BigDecimal sellingPrice;
     private String imageUrls;
 }
-

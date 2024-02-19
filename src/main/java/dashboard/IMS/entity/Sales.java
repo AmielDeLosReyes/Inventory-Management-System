@@ -5,6 +5,13 @@ import lombok.*;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
+/**
+ * Entity class for Sales.
+ * Represents sales data stored in the database.
+ *
+ * @author Amiel De Los Reyes
+ * @date 02/20/2024
+ */
 @Entity
 @Getter
 @Setter
