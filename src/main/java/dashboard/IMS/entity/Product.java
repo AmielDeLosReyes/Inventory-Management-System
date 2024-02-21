@@ -1,9 +1,12 @@
 package dashboard.IMS.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Entity class for Product.
@@ -19,6 +22,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Table(name = "product")
+
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +40,6 @@ public class Product {
     @Column(name = "selling_price", precision = 10, scale = 2)
     private BigDecimal sellingPrice;
 
-    @Column(name = "image_urls", columnDefinition = "JSON")
+    @Column(name = "image_urls")
     private String imageUrls;
 }

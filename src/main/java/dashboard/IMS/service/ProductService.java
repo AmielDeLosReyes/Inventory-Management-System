@@ -1,6 +1,9 @@
 package dashboard.IMS.service;
 
+import dashboard.IMS.dto.ProductDTO;
+import dashboard.IMS.dto.ProductVariationDTO;
 import dashboard.IMS.entity.Product;
+import dashboard.IMS.mapper.ProductMapper;
 import dashboard.IMS.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,12 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ProductVariationService productVariationService;
+
+    @Autowired
+    private ProductMapper productMapper;
 
     /**
      * Retrieves all products from the database.
@@ -73,4 +82,21 @@ public class ProductService {
     public void deleteProduct(Integer id) {
         productRepository.deleteById(id);
     }
+
+    public void addProductWithVariations(ProductDTO productDTO, List<ProductVariationDTO> variations) {
+        // Map ProductDTO to Product entity
+        Product product = productMapper.toEntity(productDTO);
+
+        // Save product and get its ID
+        Product savedProduct = productRepository.save(product);
+        Integer productId = savedProduct.getId();
+
+        // Iterate over variations and set productId for each variation
+        for (ProductVariationDTO variationDTO : variations) {
+            variationDTO.setProductId(productId);
+            // Save each variation
+            productVariationService.createProductVariation(variationDTO);
+        }
+    }
+
 }

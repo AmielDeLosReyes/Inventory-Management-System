@@ -1,7 +1,10 @@
 package dashboard.IMS.service;
 
 import dashboard.IMS.dto.ProductVariationDTO;
+import dashboard.IMS.entity.Color;
+import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.ProductVariation;
+import dashboard.IMS.entity.Size;
 import dashboard.IMS.repository.ProductVariationRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -34,10 +37,31 @@ public class ProductVariationService {
      */
     public ProductVariationDTO createProductVariation(ProductVariationDTO productVariationDTO) {
         ProductVariation productVariation = new ProductVariation();
-        BeanUtils.copyProperties(productVariationDTO, productVariation);
+
+        // Set product ID
+        if (productVariationDTO.getProductId() != null) {
+            Product product = new Product();
+            product.setId(productVariationDTO.getProductId());
+            productVariation.setProduct(product);
+        }
+
+        // Set color ID
+        Color color = new Color();
+        color.setId(productVariationDTO.getColorId());
+        productVariation.setColor(color);
+
+        // Set size ID
+        Size size = new Size();
+        size.setId(productVariationDTO.getSizeId());
+        productVariation.setSize(size);
+
+        // Set quantity
+        productVariation.setQuantity(productVariationDTO.getQuantity());
+
         ProductVariation savedEntity = productVariationRepository.save(productVariation);
         return toDTO(savedEntity);
     }
+
 
     /**
      * Retrieves all ProductVariations.

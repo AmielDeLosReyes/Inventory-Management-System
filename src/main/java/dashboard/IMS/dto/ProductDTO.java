@@ -3,6 +3,7 @@ package dashboard.IMS.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Data Transfer Object (DTO) class for Product.
