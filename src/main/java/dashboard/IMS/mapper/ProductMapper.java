@@ -4,9 +4,21 @@ import dashboard.IMS.dto.ProductDTO;
 import dashboard.IMS.entity.Product;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mapper class responsible for converting between Product and ProductDTO objects.
+ *
+ * Author: Amiel De Los Reyes
+ * Date: 02/22/2024
+ */
 @Component
 public class ProductMapper {
 
+    /**
+     * Converts a ProductDTO object to a Product entity.
+     *
+     * @param productDTO The ProductDTO object to convert.
+     * @return The corresponding Product entity.
+     */
     public Product toEntity(ProductDTO productDTO) {
         Product product = new Product();
         product.setId(productDTO.getId());
@@ -18,6 +30,12 @@ public class ProductMapper {
         return product;
     }
 
+    /**
+     * Converts a Product entity to a ProductDTO object.
+     *
+     * @param product The Product entity to convert.
+     * @return The corresponding ProductDTO object.
+     */
     public ProductDTO toDTO(Product product) {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setId(product.getId());
