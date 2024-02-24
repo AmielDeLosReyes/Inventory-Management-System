@@ -3,6 +3,8 @@ package dashboard.IMS.entity;
 import lombok.*;
 
 import jakarta.persistence.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 
 /**
  * Entity class for Color.
@@ -19,6 +21,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Table(name = "color")
+@Schema(description = "Represents a color entity")
 public class Color {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

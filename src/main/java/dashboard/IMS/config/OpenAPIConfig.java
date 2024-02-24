@@ -1,5 +1,6 @@
 package dashboard.IMS.config;
 
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,4 +36,13 @@ public class OpenAPIConfig {
                                 .name("Developer: Amiel De Los Reyes")
                                 .url("https://github.com/AmielDeLosReyes")));
     }
+
+    @Bean
+    public GroupedOpenApi groupedOpenApi() {
+        return GroupedOpenApi.builder()
+                .group("inventory-api") // Provide a group name here
+                .packagesToScan("dashboard.IMS","dashboard.IMS.config","dashboard.IMS.controller","dashboard.IMS.dto","dashboard.IMS.entity","dashboard.IMS.mapper","dashboard.IMS.repository","dashboard.IMS.restcontroller","dashboard.IMS.service")
+                .build();
+    }
+
 }

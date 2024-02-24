@@ -141,12 +141,13 @@
             </div>
         </div>
 
-        <button type="button" onclick="addImageUpload()" class="btn btn-primary mb-3">Add Image</button>
+        <button type="button" onclick="addImageUpload(event)" class="btn btn-primary mb-3">Add Image</button>
 
         <script>
             let imageCount = 1;
 
-            function addImageUpload() {
+            function addImageUpload(event) {
+                event.preventDefault(); // prevent default behavior of the button click event
                 imageCount++;
                 const container = document.getElementById('imageUploadContainer');
 
@@ -160,6 +161,7 @@
                 `;
                 container.appendChild(newInputField);
             }
+
         </script>
 
 
@@ -173,8 +175,6 @@
                 <option value="large">Large</option>
             </select>
         </div><!-- col-4 -->
-
-
 
         <label class="form-label">Color:</label>
         <div><input type="text" id="showPaletteOnly"></div>
