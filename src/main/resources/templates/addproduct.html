@@ -123,61 +123,69 @@
     <h2 class="az-content-title tx-24 mg-b-5">Add Product</h2>
     <br/>
 
-    <form action="products" method="POST">
+    <form action="product/add-product" method="POST" enctype="multipart/form-data">
 
-        <input class="form-control" placeholder="Product Name" type="text">
+        <input class="form-control" placeholder="Product Name" type="text" name="productName">
 
         <br/>
 
         <label class="form-label">Product Description</label>
-        <textarea rows="3" class="form-control" placeholder="Type product description here"></textarea>
+        <textarea rows="3" class="form-control" placeholder="Type product description here" name="productDescription"></textarea>
 
         <br/>
         <div id="imageUploadContainer">
             <!-- Initial input file field -->
             <div class="col-lg-4">
                 <label for="formFile1" class="form-label">Product Image 1</label>
-                <input class="form-control" type="file" id="formFile1" name="image[]" accept="image/*">
+                <input class="form-control" type="file" id="formFile1" name="images" accept="image/*">
             </div>
         </div>
 
-        <button type="button" onclick="addImageUpload(event)" class="btn btn-primary mb-3">Add Image</button>
+<!--        <button type="button" onclick="addImageUpload(event)" class="btn btn-primary mb-3">Add Image</button>-->
 
-        <script>
-            let imageCount = 1;
+<!--        <script>-->
+<!--            let imageCount = 1;-->
 
-            function addImageUpload(event) {
-                event.preventDefault(); // prevent default behavior of the button click event
-                imageCount++;
-                const container = document.getElementById('imageUploadContainer');
+<!--            function addImageUpload(event) {-->
+<!--                event.preventDefault(); // prevent default behavior of the button click event-->
+<!--                imageCount++;-->
+<!--                const container = document.getElementById('imageUploadContainer');-->
 
-                // Create new input file field
-                const newInputField = document.createElement('div');
-                newInputField.classList.add('mb-3');
-                newInputField.classList.add('col-lg-4');
-                newInputField.innerHTML = `
-                    <label for="formFile${imageCount}" class="form-label">Product Image ${imageCount}</label>
-                    <input class="form-control" type="file" id="formFile${imageCount}" name="image[]" accept="image/*">
-                `;
-                container.appendChild(newInputField);
-            }
+<!--                // Create new input file field-->
+<!--                const newInputField = document.createElement('div');-->
+<!--                newInputField.classList.add('mb-3');-->
+<!--                newInputField.classList.add('col-lg-4');-->
+<!--                newInputField.innerHTML = `-->
+<!--                    <label for="formFile${imageCount}" class="form-label">Product Image ${imageCount}</label>-->
+<!--                    <input class="form-control" type="file" id="formFile${imageCount}" name="images" accept="image/*">-->
+<!--                `;-->
+<!--                container.appendChild(newInputField);-->
+<!--            }-->
 
-        </script>
+<!--        </script>-->
 
 
         <div class="wd-200 mg-b-20">
             <label class="form-label">Size</label>
-            <select class="form-control select2-no-search">
+            <select class="form-control select2-no-search" name="size">
                 <option label="Choose one"></option>
-                <option value="xs">XS</option>
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
+                <option value="1">XS</option>
+                <option value="2">Small</option>
+                <option value="3">Medium</option>
+                <option value="4">Large</option>
             </select>
         </div><!-- col-4 -->
 
-        <label class="form-label">Color:</label>
-        <div><input type="text" id="showPaletteOnly"></div>
+        <div class="wd-200 mg-b-20">
+            <label class="form-label">Color</label>
+            <select class="form-control select2-no-search" name="color">
+                <option label="Choose one"></option>
+                <option value="1">Black</option>
+                <option value="2">White</option>
+                <option value="3">Red</option>
+                <option value="4">Blue</option>
+            </select>
+        </div><!-- col-4 -->
         <br/>
 
 
@@ -188,12 +196,12 @@
 
         <div class="input-group mb-3" style="width: 35%;">
             <span class="input-group-text">₱</span>
-            <input type="text" class="form-control" placeholder="Cost" aria-label="Cost" aria-describedby="basic-addon2">
+            <input type="text" class="form-control" placeholder="Cost" aria-label="Cost" aria-describedby="basic-addon2" name="cost">
         </div>
 
         <div class="input-group mb-3" style="width: 35%;">
             <span class="input-group-text">₱</span>
-            <input type="text" class="form-control" placeholder="Selling Price" aria-label="Selling Price" aria-describedby="basic-addon2">
+            <input type="text" class="form-control" placeholder="Selling Price" aria-label="Selling Price" aria-describedby="basic-addon2" name="sellingPrice">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
 
