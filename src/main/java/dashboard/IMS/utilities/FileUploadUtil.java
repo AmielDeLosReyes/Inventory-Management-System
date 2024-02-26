@@ -9,6 +9,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+
+/**
+ * Utility class for file upload operations
+ *
+ * Author: Amiel De Los Reyes
+ * Date: 02/26/2024
+ */
 public class FileUploadUtil {
 
     public static void saveFile(String uploadDir, String fileName, MultipartFile multipartFile) throws IOException {
