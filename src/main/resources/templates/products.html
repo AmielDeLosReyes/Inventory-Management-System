@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -52,7 +52,7 @@
         .sizes-table td:hover {
             background-color: #f2f2f2;
         }
-  
+
       .btn-block {
         margin-bottom: 10px; /* Adjust this value as needed */
       }
@@ -132,58 +132,67 @@
                     <th>ID</th>
                     <th>Photo</th>
                     <th>Name</th>
-                    <th>Colors & Sizes</th>
+                    <th>Color & Sizes</th>
                     <th>Total Stocks</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td><img src="face4.jpeg"/></td>
-                    <td>Tiger Nixon</td>
+                <!-- Iterate over each product -->
+                <tr th:each="product, index : ${products}">
+                    <!-- Product ID -->
+                    <th scope="row" th:text="${index.index + 1}"></th>
+                    <!-- Product Photo -->
                     <td>
-                        <!-- Placeholder for colors and sizes -->
-                        <ul>
-                            <li>Red:
-                                <ul>
-                                    <li><i class="fas fa-tshirt shirt-icon" style="color: red;"></i> Small: 2</li>
-                                    <li><i class="fas fa-tshirt shirt-icon" style="color: red;"></i> Medium: 1</li>
-                                    <li><i class="fas fa-tshirt shirt-icon" style="color: red;"></i> Large: 4</li>
-                                </ul>
-                            </li>
-                            <li>Blue:
-                                <ul>
-                                    <li><i class="fas fa-tshirt shirt-icon" style="color: blue;"></i> Small: 1</li>
-                                    <li><i class="fas fa-tshirt shirt-icon" style="color: blue;"></i> Medium: 2</li>
-                                    <li><i class="fas fa-tshirt shirt-icon" style="color: blue;"></i> Large: 3</li>
-                                </ul>
-                            </li>
-                            <!-- Add more colors and sizes dynamically -->
-                        </ul>
+                        <!-- Display the image using the corresponding image URL -->
+                        <img th:src="${productImageUrls.get(product.id)}" style="width: 100px; height: 100px;" />
                     </td>
-                    <td>$320,800</td>
+                    <!-- Product Name -->
+                    <td th:text="${product.productName}"></td>
+                    <!-- Placeholder for sizes -->
+                    <td>
+                        <table class="sizes-table">
+                            <tr>
+                                <!-- Iterate over each variation of the product -->
+                                <td th:each="variation : ${productVariations}" th:if="${variation.product.id == product.id}">
+                                    <!-- Display size name and quantity -->
+                                    <span>
+                                        <i class="fas fa-tshirt shirt-icon" th:style="'color: ' + ${variation.color.name.toLowerCase()}"></i>
+                                        <span th:text="${variation.size.name}"></span>: <span th:text="${variation.quantity}"></span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <!-- Calculate total quantity for the product -->
+                    <td>
+                        <span th:text="${productTotalQuantities.get(product.id)}"></span>
+                    </td>
+
+                    <!-- Actions -->
                     <td>
                         <div class="row">
                             <div class="col-sm-6 col-md-2">
-                                <button id="soldButton" class="btn btn-success btn-block">Sold</button>
+                                <!-- Dynamically assign unique IDs to the buttons -->
+                                <button th:id="'soldButton' + ${index.index}" class="btn btn-success btn-block">Sold</button>
                             </div>
                             <div class="col-sm-6 col-md-2">
-                                <button id="refundButton" class="btn btn-warning btn-block">Refund</button>
+                                <button th:id="'refundButton' + ${index.index}" class="btn btn-warning btn-block">Refund</button>
+
                             </div>
                             <div class="col-sm-6 col-md-2">
                                 <button class="btn btn-info btn-block">Edit</button>
                             </div>
                             <div class="col-sm-6 col-md-2">
-                                <button id="deleteButton" class="btn btn-danger btn-block">Delete</button>
+                                <button th:id="'deleteButton' + ${index.index}" class="btn btn-danger btn-block">Delete</button>
+
                             </div>
                         </div>
                     </td>
-
                 </tr>
-                <!-- More product rows -->
                 </tbody>
             </table>
+
             <br>
             <div style="display: flex; justify-content: center;">
                 <ul class="pagination">
@@ -217,20 +226,35 @@
 
 <!-- Script to handle modal -->
 <script>
-    // Vanilla JavaScript
-    document.getElementById('soldButton').addEventListener('click', function() {
-        $('#soldModal').modal('show'); // Show the modal
+    $(document).ready(function() {
+    // Delegate click event for sold buttons
+    $(document).on('click', 'button[id^="soldButton"]', function() {
+        var rowId = parseInt($(this).attr('id').match(/\d+/)[0]); // Extract the row ID from the button ID
+        console.log("Sold button clicked for row: " + rowId);
+        $('#soldModal' + rowId).modal('show'); // Show the corresponding modal
     });
-    document.getElementById('refundButton').addEventListener('click', function() {
-        $('#refundModal').modal('show'); // Show the modal
+
+    // Delegate click event for refund buttons
+    $(document).on('click', 'button[id^="refundButton"]', function() {
+        var rowId = parseInt($(this).attr('id').match(/\d+/)[0]); // Extract the row ID from the button ID
+        console.log("Refund button clicked for row: " + rowId);
+        $('#refundModal' + rowId).modal('show'); // Show the corresponding modal
     });
-    document.getElementById('deleteButton').addEventListener('click', function() {
-        $('#deleteModal').modal('show'); // Show the modal
+
+    // Delegate click event for delete buttons
+    $(document).on('click', 'button[id^="deleteButton"]', function() {
+        var rowId = parseInt($(this).attr('id').match(/\d+/)[0]); // Extract the row ID from the button ID
+        console.log("Delete button clicked for row: " + rowId);
+        $('#deleteModal' + rowId).modal('show'); // Show the corresponding modal
     });
+});
+
 </script>
 
+
+
 <!-- Sold MODAL -->
-<div id="soldModal" class="modal">
+<div th:each="product, index : ${products}" th:id="'soldModal' + ${index.index}" class="modal">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -262,7 +286,7 @@
 </div><!-- modal -->
 
 <!-- Refund MODAL -->
-<div id="refundModal" class="modal">
+<div th:each="product, index : ${products}" th:id="'refundModal' + ${index.index}" class="modal">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -295,7 +319,7 @@
 
 
 <!-- Delete MODAL -->
-<div id="deleteModal" class="modal">
+<div th:each="product, index : ${products}" th:id="'deleteModal' + ${index.index}" class="modal">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">

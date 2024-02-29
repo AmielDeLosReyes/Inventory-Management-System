@@ -1,7 +1,17 @@
 package dashboard.IMS.controller;
 
+import dashboard.IMS.entity.Product;
+import dashboard.IMS.entity.ProductVariation;
+import dashboard.IMS.repository.ProductRepository;
+import dashboard.IMS.repository.ProductVariationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller class for handling HTTP requests related to navigation.
@@ -12,6 +22,12 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class HomeController {
+
+    @Autowired
+    ProductVariationRepository productVariationRepository;
+
+    @Autowired
+    ProductRepository productRepository;
 
     /**
      * Directs users to the index page.
@@ -69,7 +85,58 @@ public class HomeController {
      * @return Name of the product list page.
      */
     @GetMapping("/products")
-    public String productList() {
+    public String productList(Model model) {
+
+        // Retrieve all product variations from the database
+        List<ProductVariation> productVariations = productVariationRepository.findAll();
+
+        List<Product> products = productRepository.findAll();
+
+        List<Object[]> totalQuantities = productVariationRepository.getTotalQuantities();
+
+        // Create a map to store total quantities for each product
+        Map<Integer, Integer> productTotalQuantities = new HashMap<>();
+        for (Object[] row : totalQuantities) {
+            Integer productId = ((Number) row[0]).intValue(); // Cast to Integer
+            Integer totalQuantity = ((Number) row[1]).intValue(); // Cast to Integer
+            productTotalQuantities.put(productId, totalQuantity);
+        }
+
+        // Extract the first image URL for each product
+        Map<Integer, String> productImageUrls = new HashMap<>();
+        for (Product product : products) {
+            String imageUrls = product.getImageUrls(); // Get the comma-separated list
+            System.out.println("Product ID: " + product.getId());
+            System.out.println("Image URLs: " + imageUrls);
+            if (imageUrls != null && !imageUrls.isEmpty()) {
+                // Remove square brackets if present
+                imageUrls = imageUrls.replaceAll("\\[|\\]", "");
+                String[] imageUrlArray = imageUrls.split(","); // Split by comma
+                System.out.println("Image URL Array Length: " + imageUrlArray.length);
+                if (imageUrlArray.length > 0) {
+                    String firstImageUrl = imageUrlArray[0].trim(); // Get the first URL
+                    // Remove leading backslash if present
+                    if (firstImageUrl.startsWith("/")) {
+                        firstImageUrl = firstImageUrl.substring(1);
+                    }
+                    System.out.println("First Image URL: " + firstImageUrl);
+                    productImageUrls.put(product.getId(), firstImageUrl);
+                } else {
+                    System.out.println("No image URLs found for product ID: " + product.getId());
+                }
+            } else {
+                System.out.println("No image URLs found for product ID: " + product.getId());
+            }
+        }
+
+        // Pass the product variations to the view
+        model.addAttribute("productVariations", productVariations);
+        model.addAttribute("products", products);
+        model.addAttribute("productImageUrls", productImageUrls);
+        model.addAttribute("productTotalQuantities", productTotalQuantities); // Pass total quantities as an attribute
+
+
+
         return "products";
     }
 

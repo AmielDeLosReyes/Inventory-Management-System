@@ -63,7 +63,7 @@ public class ProductController {
                 if (image != null && !image.isEmpty()) {
                     String filename = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
                     // Save the file to the server
-                    String uploadDir = "src/main/resources/images/" + productName; // You might want to change the upload directory
+                    String uploadDir = "src/main/resources/static/images/" + productName; // You might want to change the upload directory
                     FileUploadUtil.saveFile(uploadDir, filename, image);
                     // Get the URL of the saved file
                     String imageUrl = "/images/" + productName + "/" + filename; // Adjust this URL as per your directory structure
