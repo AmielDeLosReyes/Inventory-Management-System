@@ -47,47 +47,11 @@ public class ProductController {
                                  @RequestParam("quantity") int quantity,
                                  @RequestParam("cost") double cost,
                                  @RequestParam("sellingPrice") double sellingPrice,
-                                 RedirectAttributes redirectAttributes){
-
+                                 RedirectAttributes redirectAttributes) {
         try {
-            // Process form data and create DTOs
-            Product product = new Product();
-            product.setProductName(productName);
-            product.setProductDescription(productDescription);
-            product.setCostPrice(BigDecimal.valueOf(cost));
-            product.setSellingPrice(BigDecimal.valueOf(sellingPrice));
-
-            // Save uploaded images and get their URLs
-            List<String> imageUrls = new ArrayList<>();
-            for (MultipartFile image : images) {
-                if (image != null && !image.isEmpty()) {
-                    String filename = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
-                    // Save the file to the server
-                    String uploadDir = "src/main/resources/static/images/" + productName; // You might want to change the upload directory
-                    FileUploadUtil.saveFile(uploadDir, filename, image);
-                    // Get the URL of the saved file
-                    String imageUrl = "/images/" + productName + "/" + filename; // Adjust this URL as per your directory structure
-                    imageUrls.add(imageUrl);
-                }
-            }
-
-            // Save Product with image URLs
-            product.setImageUrls(String.valueOf(imageUrls));
-
-            // Save Product
-            Product savedProduct = productService.addProduct(product);
-
-
-            // Process form data and create ProductVariationDTO
-            ProductVariationDTO productVariationDTO = new ProductVariationDTO();
-            productVariationDTO.setProductId(savedProduct.getId());
-            productVariationDTO.setSizeId(size);
-            productVariationDTO.setColorId(color);
-            productVariationDTO.setQuantity(quantity);
-
-            // Save ProductVariation
-            productVariationService.createProductVariation(productVariationDTO);
-
+            // Call the new method in ProductService to handle product addition with variations
+            productService.addProductWithVariationsFromFormData(productName, productDescription, images,
+                    size, color, quantity, cost, sellingPrice);
             return "redirect:/products";
         } catch (Exception e) {
             e.printStackTrace();
