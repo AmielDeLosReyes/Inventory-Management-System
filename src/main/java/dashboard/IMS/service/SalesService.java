@@ -73,10 +73,21 @@ public class SalesService {
             Sales existingEntity = salesOptional.get();
             BeanUtils.copyProperties(salesDTO, existingEntity);
             Sales updatedEntity = salesRepository.save(existingEntity);
-            return toDTO(updatedEntity);
+            // Convert the updated entity to DTO
+            SalesDTO updatedDto = toDTO(updatedEntity);
+
+            // Check if all properties are copied correctly
+            if(updatedDto.getId() != null && updatedDto.getProductVariationId() != null &&
+                    updatedDto.getQuantitySold() != null && updatedDto.getTotalRevenue() != null &&
+                    updatedDto.getTotalCost() != null && updatedDto.getTotalProfit() != null) {
+                return updatedDto;
+            } else {
+                return null;
+            }
         }
         return null; // Or throw an exception indicating the sales record was not found
     }
+
 
     /**
      * Deletes a Sales record by its ID.
@@ -94,8 +105,12 @@ public class SalesService {
      * @return The corresponding Sales DTO.
      */
     private SalesDTO toDTO(Sales entity) {
+        if (entity == null) {
+            return null; // Return null if entity is null
+        }
         SalesDTO dto = new SalesDTO();
         BeanUtils.copyProperties(entity, dto);
         return dto;
     }
+
 }
