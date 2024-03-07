@@ -122,4 +122,11 @@ public class ProductVariationService {
         BeanUtils.copyProperties(entity, dto);
         return dto;
     }
+
+    public boolean existsProductVariation(Integer productId) {
+        // Assuming you have a method to fetch product variations by product ID
+        List<ProductVariation> variations = productVariationRepository.findByProductId(productId);
+        return !variations.isEmpty();
+    }
+
 }

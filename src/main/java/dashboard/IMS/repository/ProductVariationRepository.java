@@ -21,4 +21,6 @@ public interface ProductVariationRepository extends JpaRepository<ProductVariati
             "FROM ProductVariation pv " +
             "GROUP BY pv.product.id")
     List<Object[]> getTotalQuantities();
+
+    List<ProductVariation> findByProductId(Integer productId);
 }

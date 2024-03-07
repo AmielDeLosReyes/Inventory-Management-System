@@ -65,7 +65,22 @@
     </style>
 </head>
 <body class="az-body az-light" style="overflow-y: auto;">
+<!-- Alert -->
+<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
+    <strong>Success!</strong> <span th:text="${message}"></span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<!-- End Alert -->
 
+<!-- Add this script at the bottom of your HTML -->
+<script>
+    // Function to hide the alert after 2 seconds
+    setTimeout(function() {
+        $('#successAlert').alert('close');
+    }, 4000);
+</script>
 <div class="az-header">
     <div class="container">
         <div class="az-header-left">
@@ -185,6 +200,7 @@
                             </div>
                             <div class="col-sm-6 col-md-2">
                                 <button th:id="'deleteButton' + ${index.index}" class="btn btn-danger btn-block">Delete</button>
+
 
                             </div>
                         </div>
@@ -332,12 +348,17 @@
                 <p>Are you sure you want to delete this item?</p>
             </div>
             <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-danger">Delete</button>
+                <!-- Wrap the delete button in a form element -->
+                <form th:action="@{'product/products/' + ${product.id} + '/delete'}" method="post">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+
                 <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div><!-- modal-dialog -->
 </div><!-- modal -->
+
 
 </body>
 </html>

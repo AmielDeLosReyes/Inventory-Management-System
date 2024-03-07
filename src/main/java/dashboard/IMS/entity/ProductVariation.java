@@ -24,7 +24,7 @@ public class ProductVariation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE) // Enable cascading deletion
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -36,5 +36,8 @@ public class ProductVariation {
     @JoinColumn(name = "size_id")
     private Size size;
 
+
+
+    @Column(name="quantity")
     private int quantity;
 }

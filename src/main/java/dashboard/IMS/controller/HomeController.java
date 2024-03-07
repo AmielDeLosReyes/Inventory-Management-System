@@ -135,7 +135,11 @@ public class HomeController {
         model.addAttribute("productImageUrls", productImageUrls);
         model.addAttribute("productTotalQuantities", productTotalQuantities); // Pass total quantities as an attribute
 
-
+        // Check if message exists in flash attributes
+        if (model.containsAttribute("message")) {
+            // Retrieve the message from flash attributes and add it to the model
+            model.addAttribute("message", model.getAttribute("message"));
+        }
 
         return "products";
     }
