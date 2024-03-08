@@ -4,6 +4,7 @@ import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.ProductVariation;
 import dashboard.IMS.repository.ProductRepository;
 import dashboard.IMS.repository.ProductVariationRepository;
+import dashboard.IMS.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,13 @@ public class HomeController {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    private final ProductService productService;
+
+    public HomeController(ProductService productService) {
+        this.productService = productService;
+    }
 
     /**
      * Directs users to the index page.
@@ -127,6 +135,11 @@ public class HomeController {
             } else {
                 System.out.println("No image URLs found for product ID: " + product.getId());
             }
+
+            // Retrieve associated product variations for each product
+            List<ProductVariation> associatedProductVariations = productVariationRepository.findByProductId(product.getId());
+            // Set the retrieved product variations to the current product
+            product.setProductVariations(associatedProductVariations);
         }
 
         // Pass the product variations to the view
@@ -140,6 +153,7 @@ public class HomeController {
             // Retrieve the message from flash attributes and add it to the model
             model.addAttribute("message", model.getAttribute("message"));
         }
+
 
         return "products";
     }

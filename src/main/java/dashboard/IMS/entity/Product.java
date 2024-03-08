@@ -42,4 +42,13 @@ public class Product {
 
     @Column(name = "image_urls")
     private String imageUrls;
+
+    // Bidirectional one-to-many relationship with ProductVariation
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductVariation> productVariations;
+
+    // Setter for productVariations
+    public void setProductVariations(List<ProductVariation> productVariations) {
+        this.productVariations = productVariations;
+    }
 }

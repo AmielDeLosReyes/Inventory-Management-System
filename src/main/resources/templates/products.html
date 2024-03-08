@@ -173,7 +173,7 @@
                                     <!-- Display size name and quantity -->
                                     <span>
                                         <i class="fas fa-tshirt shirt-icon" th:style="'color: ' + ${variation.color.name.toLowerCase()}"></i>
-                                        <span th:text="${variation.size.name}"></span>: <span th:text="${variation.quantity}"></span>
+                                        <span th:text="${#strings.capitalize(variation.size.name)}"></span>: <span th:text="${variation.quantity}"></span>
                                     </span>
                                 </td>
                             </tr>
@@ -267,8 +267,6 @@
 
 </script>
 
-
-
 <!-- Sold MODAL -->
 <div th:each="product, index : ${products}" th:id="'soldModal' + ${index.index}" class="modal">
     <div class="modal-dialog modal-sm" role="document">
@@ -282,11 +280,15 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="color">Color:</label>
-                    <input type="text" id="color" class="form-control" placeholder="Enter color">
+                    <select id="color" class="form-control" readonly>
+                        <option th:each="variation : ${product.productVariations}" th:value="${variation.color.id}" th:text="${#strings.capitalize(variation.color.name)}"></option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="size">Size:</label>
-                    <input type="text" id="size" class="form-control" placeholder="Enter size">
+                    <select id="size" class="form-control" readonly>
+                        <option th:each="variation : ${product.productVariations}" th:value="${variation.size.id}" th:text="${#strings.capitalize(variation.size.name)}"></option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="quantity">Quantity:</label>
@@ -300,6 +302,8 @@
         </div>
     </div><!-- modal-dialog -->
 </div><!-- modal -->
+
+
 
 <!-- Refund MODAL -->
 <div th:each="product, index : ${products}" th:id="'refundModal' + ${index.index}" class="modal">
