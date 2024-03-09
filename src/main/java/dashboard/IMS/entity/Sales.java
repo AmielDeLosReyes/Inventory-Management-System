@@ -4,6 +4,8 @@ import lombok.*;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime; // Import LocalDateTime for the transaction date
+
 
 /**
  * Entity class for Sales.
@@ -39,4 +41,7 @@ public class Sales {
 
     @Column(name = "total_profit")
     private BigDecimal totalProfit;
+
+    @Column(name = "transaction_date") // Add column for transaction date
+    private LocalDateTime transactionDate;
 }

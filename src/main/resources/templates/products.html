@@ -62,6 +62,10 @@
             color: black;
         }
 
+        .button-container {
+            margin-bottom: 10px; /* Adjust this value as needed */
+        }
+
     </style>
 </head>
 <body class="az-body az-light" style="overflow-y: auto;">
@@ -189,19 +193,24 @@
                         <div class="row">
                             <div class="col-sm-6 col-md-2">
                                 <!-- Dynamically assign unique IDs to the buttons -->
-                                <button th:id="'soldButton' + ${index.index}" class="btn btn-success btn-block">Sold</button>
+                                <div class="button-container">
+                                    <button th:id="'soldButton' + ${index.index}" class="btn btn-success btn-block">Sold</button>
+                                </div>
                             </div>
                             <div class="col-sm-6 col-md-2">
-                                <button th:id="'refundButton' + ${index.index}" class="btn btn-warning btn-block">Refund</button>
-
+                                <div class="button-container">
+                                    <button th:id="'refundButton' + ${index.index}" class="btn btn-warning btn-block">Refund</button>
+                                </div>
                             </div>
                             <div class="col-sm-6 col-md-2">
-                                <button class="btn btn-info btn-block">Edit</button>
+                                <div class="button-container">
+                                    <button class="btn btn-info btn-block">Edit</button>
+                                </div>
                             </div>
                             <div class="col-sm-6 col-md-2">
-                                <button th:id="'deleteButton' + ${index.index}" class="btn btn-danger btn-block">Delete</button>
-
-
+                                <div class="button-container">
+                                    <button th:id="'deleteButton' + ${index.index}" class="btn btn-danger btn-block">Delete</button>
+                                </div>
                             </div>
                         </div>
                     </td>
@@ -271,37 +280,37 @@
 <div th:each="product, index : ${products}" th:id="'soldModal' + ${index.index}" class="modal">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title">Sell Items</h6>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="color">Color:</label>
-                    <select id="color" class="form-control" readonly>
-                        <option th:each="variation : ${product.productVariations}" th:value="${variation.color.id}" th:text="${#strings.capitalize(variation.color.name)}"></option>
-                    </select>
+            <form id="sellForm" action="/sell-product-variation" method="post">
+                <div class="modal-header">
+                    <h6 class="modal-title">Sell Items</h6>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="size">Size:</label>
-                    <select id="size" class="form-control" readonly>
-                        <option th:each="variation : ${product.productVariations}" th:value="${variation.size.id}" th:text="${#strings.capitalize(variation.size.name)}"></option>
-                    </select>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="productVariation">Product Variation:</label>
+                        <select id="productVariation" class="form-control" name="productVariationId">
+                            <option th:each="variation : ${product.productVariations}" th:value="${variation.id}">
+                                <!-- Concatenate variation ID, color name, and size name -->
+                                <span th:text="${variation.id + ' - ' + #strings.capitalize(variation.color.name) + ' - ' + #strings.capitalize(variation.size.name)}"></span>
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Enter quantity">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="quantity">Quantity:</label>
-                    <input type="number" id="quantity" class="form-control" placeholder="Enter quantity">
+                <div class="modal-footer justify-content-center">
+                    <button type="submit" class="btn btn-indigo">Sell Items</button>
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
                 </div>
-            </div>
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-indigo">Sell Items</button>
-                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
-            </div>
+            </form>
         </div>
     </div><!-- modal-dialog -->
 </div><!-- modal -->
+
 
 
 
