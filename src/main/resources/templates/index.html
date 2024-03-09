@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90680653-2"></script>
@@ -170,20 +170,34 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td><img src="face4.jpeg"/></td>
-                        <td>Tiger Nixon</td>
-                        <td>
-                            <table class="sizes-table">
-                                <tr>
-                                    <td><i class="fas fa-tshirt"></i> Small: 3</td>
-                                    <td><i class="fas fa-tshirt"></i> Medium: 4</td>
-                                    <td><i class="fas fa-tshirt"></i> Large: 5</td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td>$320,800</td>
+                    <tr th:each="product, index : ${products}">
+                      <th scope="row" th:text="${index.index + 1}"></th>
+                      <!-- Product Photo -->
+                      <td>
+                        <!-- Display the image using the corresponding image URL -->
+                        <img th:src="${productImageUrls.get(product.id)}" style="width: 100px; height: 100px;" />
+                      </td>
+                      <!-- Product Name -->
+                      <td th:text="${product.productName}"></td>
+                      <!-- Placeholder for sizes -->
+                      <td>
+                        <table class="sizes-table">
+                          <tr>
+                            <!-- Iterate over each variation of the product -->
+                            <td th:each="variation : ${productVariations}" th:if="${variation.product.id == product.id}">
+                              <!-- Display size name and quantity -->
+                              <span>
+                                        <i class="fas fa-tshirt shirt-icon" th:style="'color: ' + ${variation.color.name.toLowerCase()}"></i>
+                                        <span th:text="${#strings.capitalize(variation.size.name)}"></span>: <span th:text="${variation.quantity}"></span>
+                                    </span>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                      <!-- Calculate total quantity for the product -->
+                      <td>
+                        <span th:text="${productTotalQuantities.get(product.id)}"></span>
+                      </td>
                         
                     </tr>
                     <!-- More product rows -->

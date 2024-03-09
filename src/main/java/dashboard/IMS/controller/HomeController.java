@@ -48,7 +48,66 @@ public class HomeController {
      * @return Name of the index page.
      */
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) {
+
+        // Retrieve all product variations from the database
+        List<ProductVariation> productVariations = productVariationRepository.findAll();
+
+        List<Product> products = productRepository.findAll();
+
+        List<Object[]> totalQuantities = productVariationRepository.getTotalQuantities();
+
+        // Create a map to store total quantities for each product
+        Map<Integer, Integer> productTotalQuantities = new HashMap<>();
+        for (Object[] row : totalQuantities) {
+            Integer productId = ((Number) row[0]).intValue(); // Cast to Integer
+            Integer totalQuantity = ((Number) row[1]).intValue(); // Cast to Integer
+            productTotalQuantities.put(productId, totalQuantity);
+        }
+
+        // Extract the first image URL for each product
+        Map<Integer, String> productImageUrls = new HashMap<>();
+        for (Product product : products) {
+            String imageUrls = product.getImageUrls(); // Get the comma-separated list
+            System.out.println("Product ID: " + product.getId());
+            System.out.println("Image URLs: " + imageUrls);
+            if (imageUrls != null && !imageUrls.isEmpty()) {
+                // Remove square brackets if present
+                imageUrls = imageUrls.replaceAll("\\[|\\]", "");
+                String[] imageUrlArray = imageUrls.split(","); // Split by comma
+                System.out.println("Image URL Array Length: " + imageUrlArray.length);
+                if (imageUrlArray.length > 0) {
+                    String firstImageUrl = imageUrlArray[0].trim(); // Get the first URL
+                    // Remove leading backslash if present
+                    if (firstImageUrl.startsWith("/")) {
+                        firstImageUrl = firstImageUrl.substring(1);
+                    }
+                    System.out.println("First Image URL: " + firstImageUrl);
+                    productImageUrls.put(product.getId(), firstImageUrl);
+                } else {
+                    System.out.println("No image URLs found for product ID: " + product.getId());
+                }
+            } else {
+                System.out.println("No image URLs found for product ID: " + product.getId());
+            }
+
+            // Retrieve associated product variations for each product
+            List<ProductVariation> associatedProductVariations = productVariationRepository.findByProductId(product.getId());
+            // Set the retrieved product variations to the current product
+            product.setProductVariations(associatedProductVariations);
+        }
+
+        // Pass the product variations to the view
+        model.addAttribute("productVariations", productVariations);
+        model.addAttribute("products", products);
+        model.addAttribute("productImageUrls", productImageUrls);
+        model.addAttribute("productTotalQuantities", productTotalQuantities); // Pass total quantities as an attribute
+
+        // Check if message exists in flash attributes
+        if (model.containsAttribute("message")) {
+            // Retrieve the message from flash attributes and add it to the model
+            model.addAttribute("message", model.getAttribute("message"));
+        }
         return "index";
     }
 
