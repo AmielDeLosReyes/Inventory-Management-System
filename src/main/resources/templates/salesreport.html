@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -143,45 +143,32 @@
                     <th>Revenue</th>
                     <th>Sold</th>
                     <th>Profit</th>
+                    <th>Transaction Date</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td><img src="face4.jpeg"/></td>
-                    <td>Tiger Nixon</td>
-                    <td>System Architect</td>
-                    <td>$320,800</td>
-                    <td>$320,800</td>
-                    <td>$320,800</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td><img src="face4.jpeg"/></td>
-                    <td>Tiger Nixon</td>
-                    <td>System Architect</td>
-                    <td>$320,800</td>
-                    <td>$320,800</td>
-                    <td>$320,800</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td><img src="face4.jpeg"/></td>
-                    <td>Tiger Nixon</td>
-                    <td>System Architect</td>
-                    <td>$320,800</td>
-                    <td>$320,800</td>
-                    <td>$320,800</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td><img src="face4.jpeg"/></td>
-                    <td>Tiger Nixon</td>
-                    <td>System Architect</td>
-                    <td>$320,800</td>
-                    <td>$320,800</td>
-                    <td>$320,800</td>
-                  </tr>
+                <!-- Iterate over each sales record -->
+                <tr th:each="sale, index : ${salesList}">
+                  <td th:text="${index.index + 1}">ID</td>
+                  <!-- Add photo column if available -->
+                  <td>
+                    <!-- Check if photo exists -->
+                    <img th:if="${sale.productImageUrl != null}" th:src="${sale.productImageUrl}" alt="Product Photo" style="width: 100px; height: 100px;"/>
+                  </td>
+                  <!-- Display product name -->
+                  <td th:text="${sale.productName}">Product Name</td>
+                  <!-- Display cost -->
+                  <td th:text="${sale.totalCost}">Cost</td>
+                  <!-- Display revenue -->
+                  <td th:text="${sale.totalRevenue}">Revenue</td>
+                  <!-- Display quantity sold -->
+                  <td th:text="${sale.quantitySold}">Sold</td>
+                  <!-- Display profit -->
+                  <td th:text="${sale.totalProfit}">Profit</td>
+                  <!-- Display transaction date -->
+                  <td th:text="${#temporals.format(sale.transactionDate, 'MMMM, d, yyyy') + ' at ' + #temporals.format(sale.transactionDate, 'h:mma')}">Transaction Date</td>
+
+                </tr>
                 </tbody>
               </table>
 

@@ -8,9 +8,7 @@ import dashboard.IMS.repository.SalesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
@@ -33,13 +31,29 @@ public class SalesController {
         ProductVariation productVariation = productVariationRepository.findById(productVariationId).orElse(null);
 
         if (productVariation != null) {
+            // Check if the available quantity is sufficient
+            if (productVariation.getQuantity() < quantity) {
+                // If quantity is insufficient, redirect to 404
+                return "redirect:/404";
+            }
+
+            // Subtract the sold quantity from the current quantity of the product variation
+            int remainingQuantity = productVariation.getQuantity() - quantity;
+            if (remainingQuantity <= 0) {
+                // If remaining quantity is zero or negative, redirect to 404
+                return "redirect:/404";
+            }
+
+            // Update the quantity with the remaining quantity
+            productVariation.setQuantity(remainingQuantity);
+
+            // Save the updated product variation to the database
+            productVariationRepository.save(productVariation);
+
             // Access the product object associated with the product variation
             Product product = productVariation.getProduct();
 
             if (product != null) {
-                // Retrieve the product ID
-                Integer productId = product.getId();
-
                 // Calculate total revenue, total cost, and total profit
                 BigDecimal totalRevenue = product.getSellingPrice().multiply(BigDecimal.valueOf(quantity));
                 BigDecimal totalCost = product.getCostPrice().multiply(BigDecimal.valueOf(quantity));

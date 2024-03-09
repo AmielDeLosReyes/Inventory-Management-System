@@ -2,8 +2,10 @@ package dashboard.IMS.controller;
 
 import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.ProductVariation;
+import dashboard.IMS.entity.Sales;
 import dashboard.IMS.repository.ProductRepository;
 import dashboard.IMS.repository.ProductVariationRepository;
+import dashboard.IMS.repository.SalesRepository;
 import dashboard.IMS.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +34,9 @@ public class HomeController {
 
     @Autowired
     private final ProductService productService;
+
+    @Autowired
+    private SalesRepository salesRepository;
 
     public HomeController(ProductService productService) {
         this.productService = productService;
@@ -83,9 +88,54 @@ public class HomeController {
      * @return Name of the sales report page.
      */
     @GetMapping("/sales-report")
-    public String salesReport() {
+    public String salesReport(Model model) {
+        // Fetch the list of sales from the repository
+        List<Sales> salesList = salesRepository.findAll();
+
+        // Create a map to store product image URLs
+        Map<Integer, String> productImageUrls = new HashMap<>();
+
+        // For each sale, fetch the corresponding product details
+        for (Sales sale : salesList) {
+            // Retrieve the product variation using its ID
+            ProductVariation productVariation = productVariationRepository.findById(sale.getProductVariationId()).orElse(null);
+
+            if (productVariation != null) {
+                // Access the product object associated with the product variation
+                Product product = productVariation.getProduct();
+
+                if (product != null) {
+                    // Retrieve the image URLs for the product
+                    String imageUrls = product.getImageUrls();
+                    if (imageUrls != null && !imageUrls.isEmpty()) {
+                        // Remove square brackets if present
+                        imageUrls = imageUrls.replaceAll("\\[|\\]", "");
+                        String[] imageUrlArray = imageUrls.split(","); // Split by comma
+                        if (imageUrlArray.length > 0) {
+                            String firstImageUrl = imageUrlArray[0].trim(); // Get the first URL
+                            // Remove leading backslash if present
+                            if (firstImageUrl.startsWith("/")) {
+                                firstImageUrl = firstImageUrl.substring(1);
+                            }
+                            // Store the image URL in the map
+                            productImageUrls.put(product.getId(), firstImageUrl);
+                            // Set the image URL in the sales object
+                            sale.setProductImageUrl(firstImageUrl);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Add the sales list and product image URLs to the model
+        model.addAttribute("salesList", salesList);
+        model.addAttribute("productImageUrls", productImageUrls);
+
+        // Return the view name
         return "salesreport";
     }
+
+
 
     /**
      * Directs users to the product list page.

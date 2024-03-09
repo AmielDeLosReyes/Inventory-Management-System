@@ -44,4 +44,20 @@ public class Sales {
 
     @Column(name = "transaction_date") // Add column for transaction date
     private LocalDateTime transactionDate;
+
+    @Transient
+    private String productName; // Add product name field
+
+    @Transient
+    private String productImageUrl; // Add product image URL field
+
+    // Add setter method for product name
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    // Add setter method for product image URL
+    public void setProductImageUrl(String productImageUrl) {
+        this.productImageUrl = productImageUrl;
+    }
 }
