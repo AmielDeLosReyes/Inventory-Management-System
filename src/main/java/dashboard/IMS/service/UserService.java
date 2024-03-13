@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 /**
  * Service class for User entity.
  * Handles business logic related to User entities.
@@ -99,5 +100,30 @@ public class UserService {
         UserDTO dto = new UserDTO();
         BeanUtils.copyProperties(entity, dto);
         return dto;
+    }
+
+    /**
+     * Signs up a new User.
+     *
+     * @param userDTO The DTO representing the User to be signed up.
+     * @return The signed up User DTO.
+     */
+    public UserDTO signupUser(UserDTO userDTO) {
+        // Check if username or email already exists
+        if (userRepository.existsByUsername(userDTO.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        // Encrypt the password before saving
+        String password = userDTO.getPassword();
+        userDTO.setPassword(password);
+
+        // Set registration date
+        userDTO.setRegistrationDate(new Timestamp(System.currentTimeMillis()));
+
+        return createUser(userDTO);
     }
 }

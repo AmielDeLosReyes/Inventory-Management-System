@@ -9501,8 +9501,8 @@ textarea.form-check-input.parsley-error {
 /* ###### 4.2 Buttons  ###### */
 .btn-az-primary {
   color: #fff;
-  background-color: #000f7f;
-  border-color: #452efa; }
+  background-color: #32271C;
+  border-color: #32271C; }
   .btn-az-primary:hover {
     color: #fff;
     background-color: #4d3cd5;
@@ -16547,7 +16547,7 @@ body {
 
 .az-signin-header h2, .az-signin-header .h2 {
   font-weight: 500;
-  color: #000f7f;
+  color: #32271C;
   letter-spacing: -1px; }
 
 .az-signin-header h4, .az-signin-header .h4 {
