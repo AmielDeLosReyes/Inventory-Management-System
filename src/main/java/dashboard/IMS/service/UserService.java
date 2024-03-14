@@ -3,13 +3,17 @@ package dashboard.IMS.service;
 import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.User;
 import dashboard.IMS.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 
 /**
@@ -125,5 +129,44 @@ public class UserService {
         userDTO.setRegistrationDate(new Timestamp(System.currentTimeMillis()));
 
         return createUser(userDTO);
+    }
+
+    /**
+     * Authenticates a user.
+     *
+     * @param username The username of the user.
+     * @param password The password of the user.
+     * @return The authenticated user DTO if successful, otherwise null.
+     */
+    public UserDTO loginUser(String username, String password) {
+        // Find the user by username
+        User user = userRepository.findByUsername(username);
+
+        if (user != null) {
+            // Check if the password matches
+            if (password.equals(user.getPassword())) {
+                // Password matches, return the user DTO
+                return toDTO(user);
+            }
+        }
+
+        // Authentication failed, return null
+        return null;
+    }
+
+    /**
+     * Logs out the current user and redirects to the login page.
+     *
+     * @param request  HTTP request.
+     * @param response HTTP response.
+     * @return Name of the destination page.
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        // Invalidate the user session
+        request.getSession().invalidate();
+
+        // Redirect to the login page after logout
+        return "redirect:/login";
     }
 }

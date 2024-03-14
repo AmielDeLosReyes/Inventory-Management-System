@@ -71,7 +71,7 @@
             <div class="az-img-user">
               <img src="face4.jpeg" alt="">
             </div><!-- az-img-user -->
-            <h6>Aziana Pechon</h6>
+            <h6 th:text="${fullname}"></h6>
             <span>Premium Member</span>
           </div><!-- az-header-profile -->
 
@@ -79,7 +79,7 @@
           <a href="" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
           <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
           <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>
-          <a href="page-signin" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+          <a href="/logout" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
         </div><!-- dropdown-menu -->
       </div>
     </div><!-- az-header-right -->
@@ -96,7 +96,7 @@
         </div><!-- az-img-user -->
         <div class="d-flex justify-content-between mg-b-20">
           <div>
-            <h5 class="az-profile-name">Sophia White</h5>
+            <h5 class="az-profile-name" th:text="${fullname}"></h5>
             <p class="az-profile-name-text">UI/UX Designer</p>
           </div>
           <div class="btn-icon-list">

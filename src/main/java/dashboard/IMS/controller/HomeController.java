@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,11 @@ public class HomeController {
      * @return Name of the index page.
      */
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, @RequestParam(required = false) String fullname) {
+
+        if (fullname != null) {
+            model.addAttribute("fullname", fullname);
+        }
 
         // Retrieve all product variations from the database
         List<ProductVariation> productVariations = productVariationRepository.findAll();
