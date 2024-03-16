@@ -7,6 +7,8 @@ import dashboard.IMS.repository.ProductRepository;
 import dashboard.IMS.repository.ProductVariationRepository;
 import dashboard.IMS.repository.SalesRepository;
 import dashboard.IMS.service.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,7 +51,16 @@ public class HomeController {
      * @return Name of the index page.
      */
     @GetMapping("/")
-    public String index(Model model, @RequestParam(required = false) String fullname) {
+    public String index(HttpServletRequest request, Model model, @RequestParam(required = false) String fullname) {
+
+        // Retrieve the HttpSession
+        HttpSession session = request.getSession();
+
+        // Check if a user is logged in based on the session attribute
+        if (session.getAttribute("loggedInUser") == null) {
+            // User is not authenticated, redirect to the login page
+            return "redirect:/login";
+        }
 
         if (fullname != null) {
             model.addAttribute("fullname", fullname);

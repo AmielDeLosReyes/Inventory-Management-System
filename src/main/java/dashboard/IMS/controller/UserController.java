@@ -3,6 +3,7 @@ package dashboard.IMS.controller;
 import dashboard.IMS.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,12 +37,16 @@ public class UserController {
      * @return Name of the destination page.
      */
     @PostMapping("/login")
-    public String login(@RequestParam String username, @RequestParam String password, Model model) {
+    public String login(@RequestParam String username, @RequestParam String password, Model model, HttpServletRequest request) {
         // Authenticate user
         UserDTO authenticatedUser = userService.loginUser(username, password);
 
         if (authenticatedUser != null) {
-            // Authentication successful, redirect to the index page with fullname as query parameter
+            // Authentication successful, set session attribute indicating user is logged in
+            HttpSession session = request.getSession();
+            session.setAttribute("loggedInUser", authenticatedUser);
+
+            // Redirect to the index page with fullname as query parameter
             String fullName = authenticatedUser.getFullName();
             return "redirect:/?fullname=" + fullName;
         } else {
