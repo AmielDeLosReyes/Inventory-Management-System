@@ -169,4 +169,21 @@ public class UserService {
         // Redirect to the login page after logout
         return "redirect:/login";
     }
+
+    /**
+     * Updates the last login timestamp for the user with the given username.
+     *
+     * @param username   The username of the user to update.
+     * @param lastLogin  The timestamp of the last login.
+     * @return True if the update was successful, false otherwise.
+     */
+    public boolean updateLastLogin(String username, Timestamp lastLogin){
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            user.setLastLogin(lastLogin);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
 }

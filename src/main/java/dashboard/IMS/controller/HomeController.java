@@ -1,5 +1,6 @@
 package dashboard.IMS.controller;
 
+import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.ProductVariation;
 import dashboard.IMS.entity.Sales;
@@ -51,7 +52,7 @@ public class HomeController {
      * @return Name of the index page.
      */
     @GetMapping("/")
-    public String index(HttpServletRequest request, Model model, @RequestParam(required = false) String fullname) {
+    public String index(HttpServletRequest request, Model model) {
 
         // Retrieve the HttpSession
         HttpSession session = request.getSession();
@@ -62,9 +63,11 @@ public class HomeController {
             return "redirect:/login";
         }
 
-        if (fullname != null) {
-            model.addAttribute("fullname", fullname);
-        }
+        // Check if a user is logged in based on the session attribute
+        UserDTO authenticatedUser = (UserDTO) session.getAttribute("loggedInUser");
+
+        // Add the authenticatedUser to the model if needed for the view
+        model.addAttribute("authenticatedUser", authenticatedUser);
 
         // Retrieve all product variations from the database
         List<ProductVariation> productVariations = productVariationRepository.findAll();
@@ -119,6 +122,7 @@ public class HomeController {
         model.addAttribute("productImageUrls", productImageUrls);
         model.addAttribute("productTotalQuantities", productTotalQuantities); // Pass total quantities as an attribute
 
+
         // Check if message exists in flash attributes
         if (model.containsAttribute("message")) {
             // Retrieve the message from flash attributes and add it to the model
@@ -143,7 +147,10 @@ public class HomeController {
      * @return Name of the signup page.
      */
     @GetMapping("/signup")
-    public String signup() {
+    public String signup(Model model) {
+        // Create a new UserDTO object and add it to the model
+        UserDTO userDTO = new UserDTO();
+        model.addAttribute("userDTO", userDTO);
         return "signup";
     }
 
@@ -301,5 +308,26 @@ public class HomeController {
     @GetMapping("/blank-page")
     public String blankPage() {
         return "blankpage";
+    }
+
+    @GetMapping("/editProfile")
+    public String editProfile(HttpServletRequest request, Model model) {
+        // Retrieve the HttpSession
+        HttpSession session = request.getSession();
+
+        // Check if a user is logged in based on the session attribute
+        if (session.getAttribute("loggedInUser") == null) {
+            // User is not authenticated, redirect to the login page
+            return "redirect:/login";
+        }
+
+        // Retrieve the authenticatedUser from the session
+        UserDTO authenticatedUser = (UserDTO) session.getAttribute("loggedInUser");
+
+        System.out.println("Authenticated User Full Name: " + authenticatedUser.getFullName());
+
+        // Add the authenticatedUser to the model if needed for the view
+        model.addAttribute("authenticatedUser", authenticatedUser);
+        return "editProfile";
     }
 }

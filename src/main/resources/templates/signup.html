@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90680653-2"></script>
@@ -60,22 +60,43 @@
           <h2>Get Started</h2>
           <h4>It's free to signup and only takes a minute.</h4>
 
-          <form action="/signup-user" method="post">
+          <form action="/signup-user" th:object="${userDTO}" method="post">
             <div class="form-group">
               <label>First Name &amp; Last Name</label>
-              <input type="text" class="form-control" placeholder="Enter your first name and last name" name="fullName">
+              <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter your first name and last name"
+                      name="fullName"
+                      th:field="*{fullName}">
+              <p th:if="${#fields.hasErrors('fullName')}" class="text-danger" th:errors="*{fullName}">Full Name Error</p>
             </div><!-- form-group -->
             <div class="form-group">
               <label>Email</label>
-              <input type="email" class="form-control" placeholder="Enter your email" name="email">
+              <input type="email"
+                     class="form-control"
+                     placeholder="Enter your email"
+                     name="email"
+                     th:field="*{email}">
+              <p th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}">Email Error</p>
             </div><!-- form-group -->
             <div class="form-group">
               <label>Username</label>
-              <input type="text" class="form-control" placeholder="Enter your username" name="username">
+              <input type="text"
+                     class="form-control"
+                     placeholder="Enter your username"
+                     name="username"
+                     th:field="*{username}">
+              <p th:if="${#fields.hasErrors('username')}" class="text-danger" th:errors="*{username}">Username Error</p>
             </div><!-- form-group -->
             <div class="form-group">
               <label>Password</label>
-              <input type="password" class="form-control" placeholder="Enter your password" name="password">
+              <input type="password"
+                     class="form-control"
+                     placeholder="Enter your password"
+                     name="password"
+                     th:field="*{password}">
+              <p th:if="${#fields.hasErrors('password')}" class="text-danger" th:errors="*{password}">Password Error</p>
             </div><!-- form-group -->
             <div class="form-group">
               <label>Role</label>

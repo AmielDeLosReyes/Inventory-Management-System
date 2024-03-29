@@ -4,16 +4,19 @@ import dashboard.IMS.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import dashboard.IMS.entity.User;
 import dashboard.IMS.service.UserService;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.sql.Timestamp;
+
 
 @Controller
 public class UserController {
@@ -22,8 +25,15 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/signup-user")
-    public String signupUser(UserDTO userDTO) {
+    public String signupUser(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult bindingResult, Model model) {
+        if(bindingResult.hasErrors()) {
+            return "signup";
+        }
         userService.signupUser(userDTO);
+
+        // Add userDTO object to the model
+        model.addAttribute("userDTO", userDTO);
+
         // Redirect to login page after successful signup
         return "redirect:/login";
     }
@@ -37,18 +47,27 @@ public class UserController {
      * @return Name of the destination page.
      */
     @PostMapping("/login")
-    public String login(@RequestParam String username, @RequestParam String password, Model model, HttpServletRequest request) {
+    public String login(@RequestParam String username, @RequestParam String password, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         // Authenticate user
         UserDTO authenticatedUser = userService.loginUser(username, password);
 
+        // Debug Log
+        System.out.println("Authenticated User after login attempt: " + authenticatedUser);
+
         if (authenticatedUser != null) {
+            // Update last login timestamp
+            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+            userService.updateLastLogin(username, currentTimestamp);
+
             // Authentication successful, set session attribute indicating user is logged in
             HttpSession session = request.getSession();
             session.setAttribute("loggedInUser", authenticatedUser);
 
-            // Redirect to the index page with fullname as query parameter
-            String fullName = authenticatedUser.getFullName();
-            return "redirect:/?fullname=" + fullName;
+
+            // Add authenticatedUser as flash attribute
+            redirectAttributes.addFlashAttribute("authenticatedUser", authenticatedUser);
+
+            return "redirect:/";
         } else {
             // Authentication failed, add error message to the model and return to the login page
             model.addAttribute("error", "Invalid username or password");
