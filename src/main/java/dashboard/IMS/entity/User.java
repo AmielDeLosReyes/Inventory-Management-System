@@ -45,4 +45,9 @@ public class User {
 
     @Column(nullable = false)
     private String roles;
+
+    @Column(name = "profile_picture")
+    private String profilePicture;  // Add this field to store the profile picture path
+
+
 }

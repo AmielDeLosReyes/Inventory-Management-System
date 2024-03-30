@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
@@ -68,6 +70,9 @@ public class HomeController {
 
         // Add the authenticatedUser to the model if needed for the view
         model.addAttribute("authenticatedUser", authenticatedUser);
+
+
+        System.out.println("Profile Picture Path: " + authenticatedUser.getProfilePicture());
 
         // Retrieve all product variations from the database
         List<ProductVariation> productVariations = productVariationRepository.findAll();
@@ -310,24 +315,5 @@ public class HomeController {
         return "blankpage";
     }
 
-    @GetMapping("/editProfile")
-    public String editProfile(HttpServletRequest request, Model model) {
-        // Retrieve the HttpSession
-        HttpSession session = request.getSession();
 
-        // Check if a user is logged in based on the session attribute
-        if (session.getAttribute("loggedInUser") == null) {
-            // User is not authenticated, redirect to the login page
-            return "redirect:/login";
-        }
-
-        // Retrieve the authenticatedUser from the session
-        UserDTO authenticatedUser = (UserDTO) session.getAttribute("loggedInUser");
-
-        System.out.println("Authenticated User Full Name: " + authenticatedUser.getFullName());
-
-        // Add the authenticatedUser to the model if needed for the view
-        model.addAttribute("authenticatedUser", authenticatedUser);
-        return "editProfile";
-    }
 }

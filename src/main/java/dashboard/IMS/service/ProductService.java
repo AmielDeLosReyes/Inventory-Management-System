@@ -120,8 +120,7 @@ public class ProductService {
      * @return The added product object.
      */
     @Transactional
-    public Product addProductWithVariationsFromFormData(String productName, String productDescription, MultipartFile[] images,
-                                            int size, int color, int quantity, double cost, double sellingPrice) {
+    public Product addProductWithVariationsFromFormData(String productName, String productDescription, MultipartFile[] images, int size, int color, int quantity, double cost, double sellingPrice) {
         try {
             // Process form data and create Product entity
             Product product = new Product();

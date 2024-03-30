@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 
@@ -40,4 +41,14 @@ public class UserDTO {
     private Timestamp registrationDate;
     private Timestamp lastLogin;
     private String roles;
+    @Getter
+    private String profilePicture; // Add this field to store the URL of the user's profile picture
+    // other fields...
+
+    // getters and setters...
+
+    public void setPictureUrl(String pictureUrl) {
+        this.profilePicture = pictureUrl;
+    }
+
 }

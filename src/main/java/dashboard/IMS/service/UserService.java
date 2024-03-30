@@ -8,7 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -186,4 +189,31 @@ public class UserService {
         }
         return false;
     }
+
+    public UserDTO updateUserDetails(Integer userId, String username, String fullName, String email, String profilePicturePath) {
+        // Check if the user exists in the database
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User existingUser = userOptional.get();
+
+            // Update the user details
+            existingUser.setUsername(username);
+            existingUser.setFullName(fullName);
+            existingUser.setEmail(email);
+            existingUser.setProfilePicture(profilePicturePath);
+
+            // Save the updated user to the database
+            User updatedUser = userRepository.save(existingUser);
+
+            // Convert the updated user entity to a DTO
+            UserDTO updatedUserDTO = new UserDTO();
+            BeanUtils.copyProperties(updatedUser, updatedUserDTO);
+
+            return updatedUserDTO;
+        } else {
+            throw new IllegalArgumentException("User with id " + userId + " not found");
+        }
+    }
+
+
 }
