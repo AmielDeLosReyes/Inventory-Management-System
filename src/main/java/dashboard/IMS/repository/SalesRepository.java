@@ -1,8 +1,11 @@
 package dashboard.IMS.repository;
 
+import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.Sales;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Repository interface for Sales entity.
@@ -13,4 +16,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface SalesRepository extends JpaRepository<Sales, Integer> {
+    List<Sales> findByUserId(Integer userId);
+
+    List<Sales> findAllByUser(UserDTO loggedInUser);
+
+    List<Sales> findAllByUserId(Integer id);
+
+    void deleteByProductVariationId(Integer productVariationId);
 }

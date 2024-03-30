@@ -60,4 +60,9 @@ public class Sales {
     public void setProductImageUrl(String productImageUrl) {
         this.productImageUrl = productImageUrl;
     }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }

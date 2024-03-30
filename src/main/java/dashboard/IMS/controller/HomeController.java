@@ -4,6 +4,7 @@ import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.ProductVariation;
 import dashboard.IMS.entity.Sales;
+import dashboard.IMS.entity.User;
 import dashboard.IMS.repository.ProductRepository;
 import dashboard.IMS.repository.ProductVariationRepository;
 import dashboard.IMS.repository.SalesRepository;
@@ -74,18 +75,36 @@ public class HomeController {
 
         System.out.println("Profile Picture Path: " + authenticatedUser.getProfilePicture());
 
-        // Retrieve all product variations from the database
-        List<ProductVariation> productVariations = productVariationRepository.findAll();
+        // Retrieve products owned by the logged-in user from the database
+        List<Product> products = productRepository.findByUserId(authenticatedUser.getId());
 
-        List<Product> products = productRepository.findAll();
+        // Retrieve all product variations owned by the logged-in user from the database
+        List<ProductVariation> productVariations = productVariationRepository.findAllByProductUserId(authenticatedUser.getId());
 
-        List<Object[]> totalQuantities = productVariationRepository.getTotalQuantities();
+        // Retrieve total quantities of product variations owned by the logged-in user
+        List<Object[]> totalQuantities = productVariationRepository.getTotalQuantitiesByProductUserId(authenticatedUser.getId());
 
         // Create a map to store total quantities for each product
         Map<Integer, Integer> productTotalQuantities = new HashMap<>();
         for (Object[] row : totalQuantities) {
-            Integer productId = ((Number) row[0]).intValue(); // Cast to Integer
-            Integer totalQuantity = ((Number) row[1]).intValue(); // Cast to Integer
+            if (row.length < 2) {
+                // Handle the case when the row doesn't contain enough elements
+                // Maybe log an error or skip this row
+                continue; // Skip this row and continue with the next one
+            }
+
+            Integer productId;
+            if (row[0] instanceof ProductVariation) {
+                productId = ((ProductVariation) row[0]).getProduct().getId();
+            } else if (row[0] instanceof Integer) {
+                productId = (Integer) row[0];
+            } else {
+                // Handle the case when the type of row[0] is unexpected
+                // Maybe log an error or skip this row
+                continue; // Skip this row and continue with the next one
+            }
+
+            Integer totalQuantity = ((Number) row[1]).intValue();
             productTotalQuantities.put(productId, totalQuantity);
         }
 
@@ -175,51 +194,62 @@ public class HomeController {
      * @return Name of the sales report page.
      */
     @GetMapping("/sales-report")
-    public String salesReport(Model model) {
-        // Fetch the list of sales from the repository
-        List<Sales> salesList = salesRepository.findAll();
+    public String salesReport(Model model, HttpServletRequest request) {
+        // Retrieve the logged-in user from the session
+        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
 
-        // Create a map to store product image URLs
-        Map<Integer, String> productImageUrls = new HashMap<>();
+        // Check if the logged-in user is valid
+        if (loggedInUser != null) {
+            // Fetch the list of sales associated with the logged-in user from the repository
+            List<Sales> salesList = salesRepository.findAllByUserId(loggedInUser.getId());
 
-        // For each sale, fetch the corresponding product details
-        for (Sales sale : salesList) {
-            // Retrieve the product variation using its ID
-            ProductVariation productVariation = productVariationRepository.findById(sale.getProductVariationId()).orElse(null);
+            // Create a map to store product image URLs
+            Map<Integer, String> productImageUrls = new HashMap<>();
 
-            if (productVariation != null) {
-                // Access the product object associated with the product variation
-                Product product = productVariation.getProduct();
+            // For each sale, fetch the corresponding product details
+            for (Sales sale : salesList) {
+                // Retrieve the product variation using its ID
+                ProductVariation productVariation = productVariationRepository.findById(sale.getProductVariationId()).orElse(null);
 
-                if (product != null) {
-                    // Retrieve the image URLs for the product
-                    String imageUrls = product.getImageUrls();
-                    if (imageUrls != null && !imageUrls.isEmpty()) {
-                        // Remove square brackets if present
-                        imageUrls = imageUrls.replaceAll("\\[|\\]", "");
-                        String[] imageUrlArray = imageUrls.split(","); // Split by comma
-                        if (imageUrlArray.length > 0) {
-                            String firstImageUrl = imageUrlArray[0].trim(); // Get the first URL
-                            // Remove leading backslash if present
-                            if (firstImageUrl.startsWith("/")) {
-                                firstImageUrl = firstImageUrl.substring(1);
+                if (productVariation != null) {
+                    // Access the product object associated with the product variation
+                    Product product = productVariation.getProduct();
+
+                    if (product != null) {
+                        // Set the product name in the sales object
+                        sale.setProductName(product.getProductName()); // Add this line
+                        // Retrieve the image URLs for the product
+                        String imageUrls = product.getImageUrls();
+                        if (imageUrls != null && !imageUrls.isEmpty()) {
+                            // Remove square brackets if present
+                            imageUrls = imageUrls.replaceAll("\\[|\\]", "");
+                            String[] imageUrlArray = imageUrls.split(","); // Split by comma
+                            if (imageUrlArray.length > 0) {
+                                String firstImageUrl = imageUrlArray[0].trim(); // Get the first URL
+                                // Remove leading backslash if present
+                                if (firstImageUrl.startsWith("/")) {
+                                    firstImageUrl = firstImageUrl.substring(1);
+                                }
+                                // Store the image URL in the map
+                                productImageUrls.put(product.getId(), firstImageUrl);
+                                // Set the image URL in the sales object
+                                sale.setProductImageUrl(firstImageUrl);
                             }
-                            // Store the image URL in the map
-                            productImageUrls.put(product.getId(), firstImageUrl);
-                            // Set the image URL in the sales object
-                            sale.setProductImageUrl(firstImageUrl);
                         }
                     }
                 }
             }
+
+            // Add the sales list and product image URLs to the model
+            model.addAttribute("salesList", salesList);
+            model.addAttribute("productImageUrls", productImageUrls);
+
+            // Return the view name
+            return "salesreport";
+        } else {
+            // If the user is not logged in, redirect to the login page
+            return "redirect:/login";
         }
-
-        // Add the sales list and product image URLs to the model
-        model.addAttribute("salesList", salesList);
-        model.addAttribute("productImageUrls", productImageUrls);
-
-        // Return the view name
-        return "salesreport";
     }
 
 
@@ -230,20 +260,48 @@ public class HomeController {
      * @return Name of the product list page.
      */
     @GetMapping("/products")
-    public String productList(Model model) {
+    public String productList(Model model, HttpServletRequest request) {
 
-        // Retrieve all product variations from the database
-        List<ProductVariation> productVariations = productVariationRepository.findAll();
+        // Retrieve the logged-in user from the session
+        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            // Redirect to login if user not logged in
+            return "redirect:/login";
+        }
 
-        List<Product> products = productRepository.findAll();
+        // Add the authenticatedUser to the model if needed for the view
+        model.addAttribute("loggedInUser", loggedInUser);
 
-        List<Object[]> totalQuantities = productVariationRepository.getTotalQuantities();
+        // Retrieve products owned by the logged-in user from the database
+        List<Product> products = productRepository.findByUserId(loggedInUser.getId());
+
+        // Retrieve all product variations owned by the logged-in user from the database
+        List<ProductVariation> productVariations = productVariationRepository.findAllByProductUserId(loggedInUser.getId());
+
+// Retrieve total quantities of product variations owned by the logged-in user
+        List<Object[]> totalQuantities = productVariationRepository.getTotalQuantitiesByProductUserId(loggedInUser.getId());
 
         // Create a map to store total quantities for each product
         Map<Integer, Integer> productTotalQuantities = new HashMap<>();
         for (Object[] row : totalQuantities) {
-            Integer productId = ((Number) row[0]).intValue(); // Cast to Integer
-            Integer totalQuantity = ((Number) row[1]).intValue(); // Cast to Integer
+            if (row.length < 2) {
+                // Handle the case when the row doesn't contain enough elements
+                // Maybe log an error or skip this row
+                continue; // Skip this row and continue with the next one
+            }
+
+            Integer productId;
+            if (row[0] instanceof ProductVariation) {
+                productId = ((ProductVariation) row[0]).getProduct().getId();
+            } else if (row[0] instanceof Integer) {
+                productId = (Integer) row[0];
+            } else {
+                // Handle the case when the type of row[0] is unexpected
+                // Maybe log an error or skip this row
+                continue; // Skip this row and continue with the next one
+            }
+
+            Integer totalQuantity = ((Number) row[1]).intValue();
             productTotalQuantities.put(productId, totalQuantity);
         }
 
@@ -290,7 +348,6 @@ public class HomeController {
             // Retrieve the message from flash attributes and add it to the model
             model.addAttribute("message", model.getAttribute("message"));
         }
-
 
         return "products";
     }

@@ -21,4 +21,6 @@ public class ProductVariationDTO {
     private Integer colorId;
     private Integer sizeId;
     private int quantity;
+    private Integer userId; // Add userId field to ProductDTO
+
 }

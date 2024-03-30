@@ -158,8 +158,8 @@
                 </thead>
                 <tbody>
                 <!-- Iterate over each product -->
-                <tr th:each="product, index : ${products}">
-                    <!-- Product ID -->
+                <tr th:each="product, index : ${products}" th:if="${product.user?.id == loggedInUser?.id}">
+                <!-- Product ID -->
                     <th scope="row" th:text="${index.index + 1}"></th>
                     <!-- Product Photo -->
                     <td>

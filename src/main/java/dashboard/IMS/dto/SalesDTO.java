@@ -24,4 +24,6 @@ public class SalesDTO {
     private BigDecimal totalRevenue;
     private BigDecimal totalCost;
     private BigDecimal totalProfit;
+    private Integer userId; // Add userId field to ProductDTO
+
 }

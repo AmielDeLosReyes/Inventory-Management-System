@@ -1,9 +1,7 @@
 package dashboard.IMS.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -51,4 +49,8 @@ public class Product {
     public void setProductVariations(List<ProductVariation> productVariations) {
         this.productVariations = productVariations;
     }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

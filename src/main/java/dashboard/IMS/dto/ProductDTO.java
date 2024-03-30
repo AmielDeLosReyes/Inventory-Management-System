@@ -24,4 +24,6 @@ public class ProductDTO {
     private BigDecimal costPrice;
     private BigDecimal sellingPrice;
     private String imageUrls;
+    private Integer userId; // Add userId field to ProductDTO
+
 }

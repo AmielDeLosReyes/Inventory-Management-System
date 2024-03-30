@@ -56,8 +56,8 @@ public class UserRestController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id) {
         // Retrieve a user by ID using the UserService
-        UserDTO user = userService.getUserById(id);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+        User user = userService.getUserById(id);
+        return user != null ? (ResponseEntity<UserDTO>) ResponseEntity.ok() : ResponseEntity.notFound().build();
     }
 
     /**

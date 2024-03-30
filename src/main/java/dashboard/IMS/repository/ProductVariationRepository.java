@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for ProductVariation entity.
@@ -25,4 +26,13 @@ public interface ProductVariationRepository extends JpaRepository<ProductVariati
     List<ProductVariation> findByProductId(Integer productId);
 
 
+    List<ProductVariation> findAllByProductUserId(Integer id);
+
+    @Query("SELECT pv.product.id, SUM(pv.quantity) " +
+            "FROM ProductVariation pv " +
+            "WHERE pv.product.user.id = :userId " +
+            "GROUP BY pv.product.id")
+    List<Object[]> getTotalQuantitiesByProductUserId(Integer userId);
+
+    Optional<ProductVariation> findByIdAndProductUserId(Integer productVariationId, Integer id);
 }

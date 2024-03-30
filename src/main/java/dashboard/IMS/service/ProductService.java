@@ -2,7 +2,9 @@ package dashboard.IMS.service;
 
 import dashboard.IMS.dto.ProductDTO;
 import dashboard.IMS.dto.ProductVariationDTO;
+import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.Product;
+import dashboard.IMS.entity.User;
 import dashboard.IMS.mapper.ProductMapper;
 import dashboard.IMS.repository.ProductRepository;
 import dashboard.IMS.utilities.FileUploadUtil;
@@ -35,6 +37,9 @@ public class ProductService {
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * Retrieves all products from the database.
@@ -120,7 +125,7 @@ public class ProductService {
      * @return The added product object.
      */
     @Transactional
-    public Product addProductWithVariationsFromFormData(String productName, String productDescription, MultipartFile[] images, int size, int color, int quantity, double cost, double sellingPrice) {
+    public Product addProductWithVariationsFromFormData(String productName, String productDescription, MultipartFile[] images, int size, int color, int quantity, double cost, double sellingPrice, UserDTO userDTO) {
         try {
             // Process form data and create Product entity
             Product product = new Product();
@@ -128,6 +133,12 @@ public class ProductService {
             product.setProductDescription(productDescription);
             product.setCostPrice(BigDecimal.valueOf(cost));
             product.setSellingPrice(BigDecimal.valueOf(sellingPrice));
+
+            // Load the user entity corresponding to the userDTO
+            User user = userService.getUserById(userDTO.getId()); // Assuming there's a method to get user by ID in the userService
+
+            // Set the user entity on the product entity
+            product.setUser(user);
 
             // Save uploaded images and get their URLs
             List<String> imageUrls = new ArrayList<>();
@@ -166,5 +177,6 @@ public class ProductService {
             return null;
         }
     }
+
 
 }

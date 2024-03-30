@@ -113,4 +113,7 @@ public class SalesService {
         return dto;
     }
 
+    public void deleteSalesByProductVariationId(Integer productVariationId) {
+        salesRepository.deleteByProductVariationId(productVariationId);
+    }
 }

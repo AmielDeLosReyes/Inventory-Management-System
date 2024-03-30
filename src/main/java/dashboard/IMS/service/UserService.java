@@ -65,10 +65,17 @@ public class UserService {
      * @param id The ID of the User to retrieve.
      * @return The User DTO if found, otherwise null.
      */
-    public UserDTO getUserById(Integer id) {
+    public UserDTO getUserDTOById(Integer id) {
         Optional<User> userOptional = userRepository.findById(id);
         return userOptional.map(this::toDTO).orElse(null);
     }
+
+    public User getUserById(Integer userId) {
+        // Retrieve the User entity from the database based on the provided userId
+        // You can use Spring Data JPA repository or any other method to fetch the user
+        return userRepository.findById(userId).orElse(null); // Assuming userRepository is your repository for User entity
+    }
+
 
     /**
      * Updates a User.

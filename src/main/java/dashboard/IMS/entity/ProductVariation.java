@@ -36,8 +36,10 @@ public class ProductVariation {
     @JoinColumn(name = "size_id")
     private Size size;
 
-
-
     @Column(name="quantity")
     private int quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id") // assuming this is the column name for the user ID
+    private User user;  // Reference to the User who created this variation
 }

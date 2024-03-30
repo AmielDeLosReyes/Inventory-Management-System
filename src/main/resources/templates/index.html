@@ -167,8 +167,8 @@
               </tr>
               </thead>
               <tbody>
-              <tr th:each="product, index : ${products}">
-                <th scope="row" th:text="${index.index + 1}"></th>
+              <tr th:each="product, index : ${products}" th:if="${product.user?.id == authenticatedUser?.id}">
+              <th scope="row" th:text="${index.index + 1}"></th>
                 <!-- Product Photo -->
                 <td>
                   <!-- Display the image using the corresponding image URL -->

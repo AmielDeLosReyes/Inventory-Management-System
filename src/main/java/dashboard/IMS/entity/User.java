@@ -4,6 +4,7 @@ import lombok.*;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Entity class for User.
@@ -50,4 +51,9 @@ public class User {
     private String profilePicture;  // Add this field to store the profile picture path
 
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product> products;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sales> sales;
 }
