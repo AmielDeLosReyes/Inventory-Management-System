@@ -34,6 +34,17 @@ public class SalesController {
     @Autowired
     private UserRepository userRepository; // Autowire UserRepository
 
+
+    /**
+     * Handles the sale of a product variation.
+     * Validates the sale and updates the database with the sale details.
+     *
+     * @param productVariationId    The ID of the product variation to be sold.
+     * @param quantity              The quantity to be sold.
+     * @param redirectAttributes    Redirect attributes for passing messages.
+     * @param request               HTTP servlet request.
+     * @return Redirect to the sales report page after successful sale or to the products page with an error message.
+     */
     @PostMapping("/sell-product-variation")
     public String sellProductVariation(@RequestParam("productVariationId") Integer productVariationId,
                                        @RequestParam("quantity") Integer quantity,

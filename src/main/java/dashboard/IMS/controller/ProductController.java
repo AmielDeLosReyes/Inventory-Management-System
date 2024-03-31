@@ -56,6 +56,12 @@ public class ProductController {
         this.productVariationService = productVariationService;
     }
 
+    /**
+     * Handles form submission for adding a new product.
+     * Validates the form inputs and processes the addition of the product with variations.
+     *
+     * @return Redirect to the product list page after adding the product.
+     */
     @PostMapping("add-product")
     public String addProductForm(@RequestParam("productName") String productName,
                                  @RequestParam("productDescription") String productDescription,
@@ -87,6 +93,15 @@ public class ProductController {
     }
 
 
+    /**
+     * Deletes a product and its associated data.
+     * Handles product deletion based on the product ID.
+     *
+     * @param id                The ID of the product to be deleted.
+     * @param redirectAttributes Redirect attributes for passing messages.
+     * @param request           HTTP servlet request.
+     * @return Redirect to the product list page after deletion.
+     */
     @PostMapping("/products/{id}/delete")
     @Transactional
     public String deleteProduct(@PathVariable Integer id, RedirectAttributes redirectAttributes, HttpServletRequest request) {

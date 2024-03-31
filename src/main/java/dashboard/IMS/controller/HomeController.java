@@ -51,6 +51,9 @@ public class HomeController {
 
     /**
      * Directs users to the index page.
+     * Checks if the user is logged in and redirects to the login page if not.
+     * Retrieves product and product variation data owned by the logged-in user.
+     * Prepares necessary data for display on the index page.
      *
      * @return Name of the index page.
      */
@@ -167,6 +170,7 @@ public class HomeController {
 
     /**
      * Directs users to the signup page.
+     * Creates a new UserDTO object and adds it to the model.
      *
      * @return Name of the signup page.
      */
@@ -190,6 +194,7 @@ public class HomeController {
 
     /**
      * Directs users to the sales report page.
+     * Fetches sales data associated with the logged-in user and prepares it for display.
      *
      * @return Name of the sales report page.
      */
@@ -256,6 +261,8 @@ public class HomeController {
 
     /**
      * Directs users to the product list page.
+     * Retrieves product and product variation data owned by the logged-in user.
+     * Prepares necessary data for display on the product list page.
      *
      * @return Name of the product list page.
      */
@@ -278,7 +285,7 @@ public class HomeController {
         // Retrieve all product variations owned by the logged-in user from the database
         List<ProductVariation> productVariations = productVariationRepository.findAllByProductUserId(loggedInUser.getId());
 
-// Retrieve total quantities of product variations owned by the logged-in user
+        // Retrieve total quantities of product variations owned by the logged-in user
         List<Object[]> totalQuantities = productVariationRepository.getTotalQuantitiesByProductUserId(loggedInUser.getId());
 
         // Create a map to store total quantities for each product

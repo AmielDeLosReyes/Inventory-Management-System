@@ -42,6 +42,15 @@ public class UserController {
     @Autowired
     private ServletContext servletContext;
 
+
+    /**
+     * Handles user signup process.
+     *
+     * @param userDTO      UserDTO object containing user information.
+     * @param bindingResult Binding result for validating user input.
+     * @param model         Model for adding attributes.
+     * @return Redirect to the login page after successful signup or to the signup page with errors.
+     */
     @PostMapping("/signup-user")
     public String signupUser(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
@@ -59,10 +68,12 @@ public class UserController {
     /**
      * Handles the login process.
      *
-     * @param username Username entered by the user.
-     * @param password Password entered by the user.
-     * @param model    Model to add attributes.
-     * @return Name of the destination page.
+     * @param username          Username entered by the user.
+     * @param password          Password entered by the user.
+     * @param model             Model to add attributes.
+     * @param request           HTTP servlet request.
+     * @param redirectAttributes Redirect attributes for passing messages.
+     * @return Redirect to the home page after successful login or to the login page with an error message.
      */
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
@@ -97,7 +108,7 @@ public class UserController {
      *
      * @param request  HTTP request.
      * @param response HTTP response.
-     * @return Name of the destination page.
+     * @return Redirect to the login page after logout.
      */
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
@@ -108,7 +119,13 @@ public class UserController {
         return "redirect:/login";
     }
 
-
+    /**
+     * Directs users to the edit profile page.
+     *
+     * @param request HTTP servlet request.
+     * @param model   Model for adding attributes.
+     * @return Name of the edit profile page.
+     */
     @GetMapping("/editProfile")
     public String editProfile(HttpServletRequest request, Model model) {
         // Retrieve the HttpSession
@@ -130,6 +147,18 @@ public class UserController {
         return "editProfile";
     }
 
+
+    /**
+     * Updates user details including profile picture.
+     *
+     * @param profilePicture     Profile picture file.
+     * @param username           Username.
+     * @param fullName           Full name.
+     * @param email              Email address.
+     * @param request            HTTP servlet request.
+     * @param redirectAttributes Redirect attributes for passing messages.
+     * @return Redirect to the home page after successful update or to the home page with an error message.
+     */
     @PostMapping("/updateUserDetails")
     public String updateUserDetails(@RequestParam("profilePicture") MultipartFile profilePicture,
                                     @RequestParam("username") String username,

@@ -70,6 +70,12 @@ public class UserService {
         return userOptional.map(this::toDTO).orElse(null);
     }
 
+    /**
+     * Retrieves a User by its ID.
+     *
+     * @param userId The ID of the User to retrieve.
+     * @return The User if found, otherwise null.
+     */
     public User getUserById(Integer userId) {
         // Retrieve the User entity from the database based on the provided userId
         // You can use Spring Data JPA repository or any other method to fetch the user
@@ -197,6 +203,16 @@ public class UserService {
         return false;
     }
 
+    /**
+     * Updates user details.
+     *
+     * @param userId             The ID of the user to update.
+     * @param username           The new username.
+     * @param fullName           The new full name.
+     * @param email              The new email address.
+     * @param profilePicturePath The new profile picture path.
+     * @return The updated User DTO.
+     */
     public UserDTO updateUserDetails(Integer userId, String username, String fullName, String email, String profilePicturePath) {
         // Check if the user exists in the database
         Optional<User> userOptional = userRepository.findById(userId);
