@@ -86,26 +86,33 @@
           </ul>
         </div><!-- az-header-menu -->
         <div class="az-header-right">
-          
+
           <div class="dropdown az-profile-menu">
-            <a href="" class="az-img-user"><img src="face4.jpeg" alt=""></a>
+            <a href="" class="az-img-user">
+              <img th:src="${loggedInUser != null && loggedInUser.profilePicture != null ? loggedInUser.profilePicture : '/img/default.png'}" alt="">
+
+
+            </a>
             <div class="dropdown-menu">
               <div class="az-dropdown-header d-sm-none">
                 <a href="" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
               </div>
               <div class="az-header-profile">
                 <div class="az-img-user">
-                  <img src="face4.jpeg" alt="">
+                  <img th:src="${loggedInUser != null && loggedInUser.profilePicture != null ? loggedInUser.profilePicture : '/img/default.png'}" alt="">
+
+
+
                 </div><!-- az-img-user -->
-                <h6>Aziana Pechon</h6>
+                <h6 th:text="${loggedInUser.fullName}"></h6>
                 <span>Premium Member</span>
               </div><!-- az-header-profile -->
-  
+
               <a href="" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a>
-              <a href="" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
-              <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
-              <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>
-              <a href="login" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+              <a th:href="@{/editProfile}" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
+              <!--          <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>-->
+              <!--          <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>-->
+              <a href="/logout" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
             </div><!-- dropdown-menu -->
           </div>
         </div><!-- az-header-right -->
@@ -135,16 +142,17 @@
             <div class="table-responsive">
               <table class="table table-striped mg-b-0">
                 <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Photo</th>
-                    <th>Name</th>
-                    <th>Cost</th>
-                    <th>Revenue</th>
-                    <th>Sold</th>
-                    <th>Profit</th>
-                    <th>Transaction Date</th>
-                  </tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Photo</th>
+                  <th>Name</th>
+                  <th>Cost</th>
+                  <th>Revenue</th>
+                  <th>Quantity</th>
+                  <th>Type</th> <!-- New column for type of sale -->
+                  <th>Profit</th>
+                  <th>Transaction Date</th>
+                </tr>
                 </thead>
                 <tbody>
                 <!-- Iterate over each sales record -->
@@ -161,13 +169,14 @@
                   <td th:text="${sale.totalCost}">Cost</td>
                   <!-- Display revenue -->
                   <td th:text="${sale.totalRevenue}">Revenue</td>
-                  <!-- Display quantity sold -->
-                  <td th:text="${sale.quantitySold}">Sold</td>
+                  <!-- Display quantity -->
+                  <td th:text="${sale.quantitySold}">Quantity</td>
+                  <!-- Display type of sale -->
+                  <td th:text="${sale.isRefund ? 'Refund' : 'Sale'}">Type</td> <!-- Display 'Refund' if isRefund is true, otherwise display 'Sale' -->
                   <!-- Display profit -->
                   <td th:text="${sale.totalProfit}">Profit</td>
                   <!-- Display transaction date -->
                   <td th:text="${#temporals.format(sale.transactionDate, 'MMMM, d, yyyy') + ' at ' + #temporals.format(sale.transactionDate, 'h:mma')}">Transaction Date</td>
-
                 </tr>
                 </tbody>
               </table>

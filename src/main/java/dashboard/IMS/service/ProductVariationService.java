@@ -58,6 +58,9 @@ public class ProductVariationService {
         // Set quantity
         productVariation.setQuantity(productVariationDTO.getQuantity());
 
+
+        productVariation.setUserId(productVariationDTO.getUserId());
+
         ProductVariation savedEntity = productVariationRepository.save(productVariation);
         return toDTO(savedEntity);
     }

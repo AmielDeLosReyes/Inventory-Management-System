@@ -30,6 +30,11 @@ public class Sales {
     @Column(name = "product_variation_id")
     private Integer productVariationId;
 
+    @Getter
+    @ManyToOne
+    @JoinColumn(name = "product_variation_id", insertable = false, updatable = false)
+    private ProductVariation productVariation;
+
     @Column(name = "quantity_sold")
     private Integer quantitySold;
 
@@ -51,6 +56,9 @@ public class Sales {
     @Transient
     private String productImageUrl; // Add product image URL field
 
+    @Column(name = "is_refund")
+    private boolean isRefund = false; // Initialize isRefund to false
+
     // Add setter method for product name
     public void setProductName(String productName) {
         this.productName = productName;
@@ -65,4 +73,18 @@ public class Sales {
     @JoinColumn(name = "user_id")
     private User user;
 
+<<<<<<< HEAD
+    public void setProductVariation(ProductVariation productVariation) {
+        this.productVariation = productVariation;
+    }
+
+    public boolean getIsRefund() {
+        return isRefund;
+    }
+
+    public void setIsRefund(boolean isRefund) {
+        this.isRefund = isRefund;
+    }
+=======
+>>>>>>> origin/main
 }

@@ -20,4 +20,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Product findByProductName(String productName);
     List<Product> findByUserId(Integer userId);
 
+<<<<<<< HEAD
+    List<Product> findByUserIdAndDeletedFalse(Integer userId);
+
+=======
+>>>>>>> origin/main
 }

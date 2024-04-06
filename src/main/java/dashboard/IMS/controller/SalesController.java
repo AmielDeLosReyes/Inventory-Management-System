@@ -18,6 +18,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+<<<<<<< HEAD
+import java.util.List;
+=======
+>>>>>>> origin/main
 import java.util.Optional;
 
 @Controller
@@ -113,7 +117,89 @@ public class SalesController {
         }
 
         // If product or product variation not found, or user not logged in, redirect with error message
+<<<<<<< HEAD
+        redirectAttributes.addFlashAttribute("message", "Failed to refund product variation. Please try again.");
+        redirectAttributes.addFlashAttribute("messageType", "failure");
+=======
         redirectAttributes.addFlashAttribute("message", "Failed to sell product variation. Please try again.");
+>>>>>>> origin/main
         return "redirect:/products";
     }
+
+    @PostMapping("/refund-product-variation")
+    public String refundProductVariation(@RequestParam("productVariationId") Integer productVariationId,
+                                         @RequestParam("quantity") Integer quantity,
+                                         RedirectAttributes redirectAttributes,
+                                         HttpServletRequest request) {
+
+        // Retrieve the logged-in user from the session attribute
+        UserDTO loggedInUserDTO = (UserDTO) request.getSession().getAttribute("loggedInUser");
+
+        // Check if the logged-in user is valid
+        if (loggedInUserDTO != null) {
+            // Retrieve the User entity corresponding to the logged-in user
+            User loggedInUser = userRepository.findUserById(loggedInUserDTO.getId());
+            if (loggedInUser == null) {
+                // Handle the case where the User entity is not found
+                redirectAttributes.addFlashAttribute("message", "Failed to refund product variation. Please try again.");
+                redirectAttributes.addFlashAttribute("messageType", "failure");
+                return "redirect:/products";
+            }
+
+            // Retrieve the sales record using productVariationId and quantity
+            List<Sales> salesRecords = salesRepository.findByProductVariationIdAndUserIdOrderByTransactionDateDesc(productVariationId, loggedInUser.getId());
+
+            int quantityToRefund = quantity;
+            for (Sales salesRecord : salesRecords) {
+                if (salesRecord.getQuantitySold() >= quantityToRefund) {
+                    // Calculate the refund amounts
+                    BigDecimal refundRevenue = salesRecord.getTotalRevenue().divide(BigDecimal.valueOf(salesRecord.getQuantitySold())).multiply(BigDecimal.valueOf(quantityToRefund));
+                    BigDecimal refundCost = salesRecord.getTotalCost().divide(BigDecimal.valueOf(salesRecord.getQuantitySold())).multiply(BigDecimal.valueOf(quantityToRefund));
+                    BigDecimal refundProfit = salesRecord.getTotalProfit().divide(BigDecimal.valueOf(salesRecord.getQuantitySold())).multiply(BigDecimal.valueOf(quantityToRefund));
+
+                    // Update the sales record
+                    int updatedQuantitySold = salesRecord.getQuantitySold() - quantityToRefund;
+                    if (updatedQuantitySold == 0) {
+                        // If updated quantity sold is zero, delete the sales record and return the original quantity to the product variation
+                        salesRepository.delete(salesRecord);
+                        ProductVariation productVariation = salesRecord.getProductVariation();
+                        productVariation.setQuantity(productVariation.getQuantity() + quantityToRefund); // Add the refunded quantity back to the product variation
+                        productVariationRepository.save(productVariation);
+                    } else {
+                        salesRecord.setQuantitySold(updatedQuantitySold);
+                        salesRepository.save(salesRecord);
+                    }
+
+                    // Create a new Sales object for the refund
+                    Sales refundSales = Sales.builder()
+                            .productVariationId(productVariationId)
+                            .quantitySold(quantityToRefund) // Positive quantity for a refund
+                            .totalRevenue(refundRevenue.negate()) // Negative revenue for a refund
+                            .totalCost(refundCost.negate()) // Negative cost for a refund
+                            .totalProfit(refundProfit.negate()) // Negative profit for a refund
+                            .transactionDate(LocalDateTime.now()) // Set the transaction date to current date and time
+                            .user(loggedInUser) // Associate the current user with the sale record
+                            .isRefund(true) // Indicate that this is a refund
+                            .build();
+
+                    // Save the refund sales record to the database
+                    salesRepository.save(refundSales);
+
+                    // Redirect to the sales report page
+                    return "redirect:/sales-report";
+                } else {
+                    // If the refund quantity is greater than the sold quantity, return an error message
+                    redirectAttributes.addFlashAttribute("message", "Refund quantity cannot be greater than sold quantity.");
+                    redirectAttributes.addFlashAttribute("messageType", "failure");
+                    return "redirect:/products";
+                }
+            }
+        }
+
+        // If sales record or product variation not found, or user not logged in, redirect with error message
+        redirectAttributes.addFlashAttribute("message", "Failed to refund product variation. Please try again.");
+        redirectAttributes.addFlashAttribute("messageType", "failure");
+        return "redirect:/products";
+    }
+
 }

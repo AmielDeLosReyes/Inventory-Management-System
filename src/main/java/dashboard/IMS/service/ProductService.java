@@ -166,6 +166,7 @@ public class ProductService {
             productVariationDTO.setSizeId(size);
             productVariationDTO.setColorId(color);
             productVariationDTO.setQuantity(quantity);
+            productVariationDTO.setUserId(userDTO.getId());
 
             // Save ProductVariation
             productVariationService.createProductVariation(productVariationDTO);

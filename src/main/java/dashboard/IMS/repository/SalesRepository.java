@@ -6,6 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+<<<<<<< HEAD
+import java.util.Optional;
+=======
+>>>>>>> origin/main
 
 /**
  * Repository interface for Sales entity.
@@ -23,4 +27,13 @@ public interface SalesRepository extends JpaRepository<Sales, Integer> {
     List<Sales> findAllByUserId(Integer id);
 
     void deleteByProductVariationId(Integer productVariationId);
+<<<<<<< HEAD
+
+    Optional<Sales> findByIdAndUserId(Integer salesId, Integer id);
+
+    Optional<Sales> findByProductVariationIdAndQuantitySoldAndUserId(Integer productVariationId, Integer quantity, Integer id);
+
+    List<Sales> findByProductVariationIdAndUserIdOrderByTransactionDateDesc(Integer productVariationId, Integer id);
+=======
+>>>>>>> origin/main
 }

@@ -79,7 +79,11 @@ public class HomeController {
         System.out.println("Profile Picture Path: " + authenticatedUser.getProfilePicture());
 
         // Retrieve products owned by the logged-in user from the database
+<<<<<<< HEAD
+        List<Product> products = productRepository.findByUserIdAndDeletedFalse(authenticatedUser.getId());
+=======
         List<Product> products = productRepository.findByUserId(authenticatedUser.getId());
+>>>>>>> origin/main
 
         // Retrieve all product variations owned by the logged-in user from the database
         List<ProductVariation> productVariations = productVariationRepository.findAllByProductUserId(authenticatedUser.getId());
@@ -207,6 +211,11 @@ public class HomeController {
         if (loggedInUser != null) {
             // Fetch the list of sales associated with the logged-in user from the repository
             List<Sales> salesList = salesRepository.findAllByUserId(loggedInUser.getId());
+<<<<<<< HEAD
+            model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
+            model.addAttribute("loggedInUser", loggedInUser);
+=======
+>>>>>>> origin/main
 
             // Create a map to store product image URLs
             Map<Integer, String> productImageUrls = new HashMap<>();
@@ -279,8 +288,15 @@ public class HomeController {
         // Add the authenticatedUser to the model if needed for the view
         model.addAttribute("loggedInUser", loggedInUser);
 
+<<<<<<< HEAD
+        model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
+
+        // Retrieve products owned by the logged-in user from the database
+        List<Product> products = productRepository.findByUserIdAndDeletedFalse(loggedInUser.getId());
+=======
         // Retrieve products owned by the logged-in user from the database
         List<Product> products = productRepository.findByUserId(loggedInUser.getId());
+>>>>>>> origin/main
 
         // Retrieve all product variations owned by the logged-in user from the database
         List<ProductVariation> productVariations = productVariationRepository.findAllByProductUserId(loggedInUser.getId());
@@ -343,6 +359,12 @@ public class HomeController {
             // Set the retrieved product variations to the current product
             product.setProductVariations(associatedProductVariations);
         }
+
+        // Retrieve sales records associated with the logged-in user
+        List<Sales> salesRecords = salesRepository.findByUserId(loggedInUser.getId());
+
+        // Pass the sales records to the view
+        model.addAttribute("salesRecords", salesRecords);
 
         // Pass the product variations to the view
         model.addAttribute("productVariations", productVariations);

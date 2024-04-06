@@ -6,6 +6,10 @@ import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.ProductVariation;
 import dashboard.IMS.entity.User;
+<<<<<<< HEAD
+import dashboard.IMS.repository.ProductRepository;
+=======
+>>>>>>> origin/main
 import dashboard.IMS.service.ProductService;
 import dashboard.IMS.service.ProductVariationService;
 import dashboard.IMS.service.SalesService;
@@ -47,6 +51,11 @@ public class ProductController {
 
     @Autowired
     private SalesService salesService;
+<<<<<<< HEAD
+    @Autowired
+    private ProductRepository productRepository;
+=======
+>>>>>>> origin/main
 
     private final ProductService productService;
     private final ProductVariationService productVariationService;
@@ -121,6 +130,15 @@ public class ProductController {
                 return "redirect:/products";
             }
 
+<<<<<<< HEAD
+            // Set the deleted flag to true instead of deleting the product
+            productToDelete.setDeleted(true);
+            productRepository.save(productToDelete);
+
+            // Add success message
+            redirectAttributes.addFlashAttribute("message", "Successfully deleted the item");
+            redirectAttributes.addFlashAttribute("messageType", "success");
+=======
             // Delete the sales records associated with the product variations of the product
             for (ProductVariation productVariation : productToDelete.getProductVariations()) {
                 salesService.deleteSalesByProductVariationId(productVariation.getId());
@@ -132,11 +150,16 @@ public class ProductController {
 
             // Add success message
             redirectAttributes.addFlashAttribute("message", "Successfully deleted the item");
+>>>>>>> origin/main
             return "redirect:/products";
         } catch (Exception e) {
             e.printStackTrace();
             // You may handle exception here
             redirectAttributes.addFlashAttribute("error", "Failed to delete product. Please try again.");
+<<<<<<< HEAD
+            redirectAttributes.addFlashAttribute("messageType", "failure");
+=======
+>>>>>>> origin/main
             return "redirect:/products";
         }
     }

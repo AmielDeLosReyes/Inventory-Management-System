@@ -69,9 +69,17 @@
     </style>
 </head>
 <body class="az-body az-light" style="overflow-y: auto;">
-<!-- Alert -->
-<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
+<!-- Success Alert -->
+<div th:if="${message != null and messageType == 'success'}" class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
     <strong>Success!</strong> <span th:text="${message}"></span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<!-- Failure Alert -->
+<div th:if="${message != null and messageType == 'failure'}" class="alert alert-danger alert-dismissible fade show" role="alert" id="failureAlert">
+    <strong>Failed!</strong> <span th:text="${message}"></span>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -115,24 +123,29 @@
         <div class="az-header-right">
 
             <div class="dropdown az-profile-menu">
-                <a href="" class="az-img-user"><img src="face4.jpeg" alt=""></a>
+                <a href="" class="az-img-user">
+                    <img th:src="${loggedInUser.profilePicture != null ? loggedInUser.profilePicture : '/img/default.png'}" alt="">
+
+                </a>
                 <div class="dropdown-menu">
                     <div class="az-dropdown-header d-sm-none">
                         <a href="" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
                     </div>
                     <div class="az-header-profile">
                         <div class="az-img-user">
-                            <img src="face4.jpeg" alt="">
+                            <img th:src="${loggedInUser.profilePicture != null ? loggedInUser.profilePicture : '/img/default.png'}" alt="">
+
+
                         </div><!-- az-img-user -->
-                        <h6>Aziana Pechon</h6>
+                        <h6 th:text="${loggedInUser.fullName}"></h6>
                         <span>Premium Member</span>
                     </div><!-- az-header-profile -->
 
                     <a href="" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a>
-                    <a href="" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
-                    <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
-                    <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>
-                    <a href="page-signin" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+                    <a th:href="@{/editProfile}" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
+                    <!--          <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>-->
+                    <!--          <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>-->
+                    <a href="/logout" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
                 </div><!-- dropdown-menu -->
             </div>
         </div><!-- az-header-right -->
@@ -146,20 +159,25 @@
     <div class="row row-sm">
         <div class="table-responsive">
             <table class="table table-striped mg-b-0">
-                <thead>
+
                 <tr>
                     <th>ID</th>
                     <th>Photo</th>
                     <th>Name</th>
                     <th>Color & Sizes</th>
                     <th>Total Stocks</th>
+                    <th>Selling Price</th> <!-- New column for selling price -->
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <!-- Iterate over each product -->
                 <tr th:each="product, index : ${products}" th:if="${product.user?.id == loggedInUser?.id}">
+<<<<<<< HEAD
+                    <!-- Product ID -->
+=======
                 <!-- Product ID -->
+>>>>>>> origin/main
                     <th scope="row" th:text="${index.index + 1}"></th>
                     <!-- Product Photo -->
                     <td>
@@ -176,9 +194,9 @@
                                 <td th:each="variation : ${productVariations}" th:if="${variation.product.id == product.id}">
                                     <!-- Display size name and quantity -->
                                     <span>
-                                        <i class="fas fa-tshirt shirt-icon" th:style="'color: ' + ${variation.color.name.toLowerCase()}"></i>
-                                        <span th:text="${#strings.capitalize(variation.size.name)}"></span>: <span th:text="${variation.quantity}"></span>
-                                    </span>
+                        <i class="fas fa-tshirt shirt-icon" th:style="'color: ' + ${variation.color.name.toLowerCase()}"></i>
+                        <span th:text="${#strings.capitalize(variation.size.name)}"></span>: <span th:text="${variation.quantity}"></span>
+                    </span>
                                 </td>
                             </tr>
                         </table>
@@ -187,6 +205,9 @@
                     <td>
                         <span th:text="${productTotalQuantities.get(product.id)}"></span>
                     </td>
+
+                    <!-- Selling Price -->
+                    <td th:text="${product.sellingPrice}"></td> <!-- Display the selling price of the product -->
 
                     <!-- Actions -->
                     <td>
@@ -318,30 +339,33 @@
 <div th:each="product, index : ${products}" th:id="'refundModal' + ${index.index}" class="modal">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title">Refund Items</h6>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="color">Color:</label>
-                    <input type="text" id="color" class="form-control" placeholder="Enter color">
+            <form id="refundForm" action="/refund-product-variation" method="post">
+                <div class="modal-header">
+                    <h6 class="modal-title">Refund Items</h6>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="size">Size:</label>
-                    <input type="text" id="size" class="form-control" placeholder="Enter size">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="productVariation">Product Variation:</label>
+                        <select id="productVariation" class="form-control" name="productVariationId">
+                            <option th:each="variation : ${product.productVariations}" th:value="${variation.id}">
+                                <!-- Concatenate variation ID, color name, and size name -->
+                                <span th:text="${variation.id + ' - ' + #strings.capitalize(variation.color.name) + ' - ' + #strings.capitalize(variation.size.name)}"></span>
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Enter quantity">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="quantity">Quantity:</label>
-                    <input type="number" id="quantity" class="form-control" placeholder="Enter quantity">
+                <div class="modal-footer justify-content-center">
+                    <button type="submit" class="btn btn-indigo">Refund Items</button>
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
                 </div>
-            </div>
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-indigo">Refund Items</button>
-                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
-            </div>
+            </form>
         </div>
     </div><!-- modal-dialog -->
 </div><!-- modal -->
