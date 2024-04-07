@@ -42,7 +42,7 @@ public class ProductVariation {
     @ManyToOne
     @JoinColumn(name = "user_id") // assuming this is the column name for the user ID
     private User user;  // Reference to the User who created this variation
-<<<<<<< HEAD
+
 
     public void setUserId(Integer userId) {
         if (userId != null) {
@@ -52,6 +52,5 @@ public class ProductVariation {
             this.user = null; // Handle case when userId is null
         }
     }
-=======
->>>>>>> origin/main
+
 }

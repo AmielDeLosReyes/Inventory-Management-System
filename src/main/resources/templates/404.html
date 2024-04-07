@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90680653-2"></script>
@@ -36,7 +36,7 @@
       <h1>404</h1>
       <h2>Oopps. The page you were looking for doesn't exist.</h2>
       <h6>You may have mistyped the address or the page may have moved.</h6>
-      <a href="index.html" class="btn btn-outline-indigo">Back to Home</a>
+      <a th:href="@{/}" class="btn btn-outline-indigo">Back to Home</a>
     </div>
 
     <script src="jquery/jquery.min.js"></script>

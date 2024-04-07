@@ -53,11 +53,9 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-<<<<<<< HEAD
 
     // Add a deleted flag
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-=======
->>>>>>> origin/main
+
 }

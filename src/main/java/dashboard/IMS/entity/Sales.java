@@ -4,16 +4,8 @@ import lombok.*;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime; // Import LocalDateTime for the transaction date
+import java.time.LocalDateTime;
 
-
-/**
- * Entity class for Sales.
- * Represents sales data stored in the database.
- *
- * @author Amiel De Los Reyes
- * @date 02/20/2024
- */
 @Entity
 @Getter
 @Setter
@@ -36,7 +28,10 @@ public class Sales {
     private ProductVariation productVariation;
 
     @Column(name = "quantity_sold")
-    private Integer quantitySold;
+    private Integer quantitySold = 0;
+
+    @Column(name = "quantity_refunded")
+    private Integer quantityRefunded = 0;
 
     @Column(name = "total_revenue")
     private BigDecimal totalRevenue;
@@ -47,24 +42,22 @@ public class Sales {
     @Column(name = "total_profit")
     private BigDecimal totalProfit;
 
-    @Column(name = "transaction_date") // Add column for transaction date
+    @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
 
     @Transient
-    private String productName; // Add product name field
+    private String productName;
 
     @Transient
-    private String productImageUrl; // Add product image URL field
+    private String productImageUrl;
 
     @Column(name = "is_refund")
-    private boolean isRefund = false; // Initialize isRefund to false
+    private boolean isRefund = false;
 
-    // Add setter method for product name
     public void setProductName(String productName) {
         this.productName = productName;
     }
 
-    // Add setter method for product image URL
     public void setProductImageUrl(String productImageUrl) {
         this.productImageUrl = productImageUrl;
     }
@@ -73,7 +66,6 @@ public class Sales {
     @JoinColumn(name = "user_id")
     private User user;
 
-<<<<<<< HEAD
     public void setProductVariation(ProductVariation productVariation) {
         this.productVariation = productVariation;
     }
@@ -85,6 +77,4 @@ public class Sales {
     public void setIsRefund(boolean isRefund) {
         this.isRefund = isRefund;
     }
-=======
->>>>>>> origin/main
 }

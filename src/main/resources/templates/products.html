@@ -159,7 +159,7 @@
     <div class="row row-sm">
         <div class="table-responsive">
             <table class="table table-striped mg-b-0">
-
+                <thead>
                 <tr>
                     <th>ID</th>
                     <th>Photo</th>
@@ -173,11 +173,7 @@
                 <tbody>
                 <!-- Iterate over each product -->
                 <tr th:each="product, index : ${products}" th:if="${product.user?.id == loggedInUser?.id}">
-<<<<<<< HEAD
-                    <!-- Product ID -->
-=======
-                <!-- Product ID -->
->>>>>>> origin/main
+
                     <th scope="row" th:text="${index.index + 1}"></th>
                     <!-- Product Photo -->
                     <td>
@@ -194,9 +190,9 @@
                                 <td th:each="variation : ${productVariations}" th:if="${variation.product.id == product.id}">
                                     <!-- Display size name and quantity -->
                                     <span>
-                        <i class="fas fa-tshirt shirt-icon" th:style="'color: ' + ${variation.color.name.toLowerCase()}"></i>
-                        <span th:text="${#strings.capitalize(variation.size.name)}"></span>: <span th:text="${variation.quantity}"></span>
-                    </span>
+                                    <i class="fas fa-tshirt shirt-icon" th:style="'color: ' + ${variation.color.name.toLowerCase()}"></i>
+                                    <span th:text="${#strings.capitalize(variation.size.name)}"></span>: <span th:text="${variation.quantity}"></span>
+                                </span>
                                 </td>
                             </tr>
                         </table>
@@ -238,8 +234,10 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
 
-            <br>
+
+        <br>
             <div style="display: flex; justify-content: center;">
                 <ul class="pagination">
                     <li class="page-item"><a class="page-link" href="#"><i class="icon ion-ios-arrow-back"></i></a></li>
