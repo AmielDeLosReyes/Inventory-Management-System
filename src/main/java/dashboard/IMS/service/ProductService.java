@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service class for Product entity.
@@ -73,18 +75,30 @@ public class ProductService {
     /**
      * Updates an existing product in the database.
      *
-     * @param id      The ID of the product to update.
-     * @param product The updated product object.
-     * @return The updated product object if successful, otherwise null.
      */
-    public Product updateProduct(Integer id, Product product) {
-        if (productRepository.existsById(id)) {
-            product.setId(id);
-            return productRepository.save(product);
-        } else {
-            return null;
+
+    public void updateProduct(Integer productId, Product updatedProduct) {
+        Product existingProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + productId));
+
+        // Update only the fields that are not null in the updatedProduct
+        if (updatedProduct.getProductName() != null) {
+            existingProduct.setProductName(updatedProduct.getProductName());
         }
+        if (updatedProduct.getProductDescription() != null) {
+            existingProduct.setProductDescription(updatedProduct.getProductDescription());
+        }
+        if (updatedProduct.getCostPrice() != null) {
+            existingProduct.setCostPrice(updatedProduct.getCostPrice());
+        }
+        if (updatedProduct.getSellingPrice() != null) {
+            existingProduct.setSellingPrice(updatedProduct.getSellingPrice());
+        }
+        // Add similar checks for other fields that can be updated
+
+        productRepository.save(existingProduct);
     }
+
 
     /**
      * Deletes a product by its ID from the database.
@@ -114,14 +128,10 @@ public class ProductService {
     /**
      * Adds a new product with variations to the database.
      *
-     * @param productName       The name of the product.
-     * @param productDescription The description of the product.
      * @param images            The array of images representing the product.
      * @param size              The size of the product variation.
      * @param color             The color of the product variation.
      * @param quantity          The quantity of the product variation.
-     * @param cost              The cost price of the product.
-     * @param sellingPrice      The selling price of the product.
      * @return The added product object.
      */
     @Transactional
@@ -174,5 +184,8 @@ public class ProductService {
     }
 
 
+    public Page<Product> getProducts(Pageable pageable) {
+        return productRepository.findByDeletedFalse(pageable);
+    }
 
 }

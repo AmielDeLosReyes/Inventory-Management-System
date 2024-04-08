@@ -2,6 +2,8 @@ package dashboard.IMS.repository;
 
 import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findByUserIdAndDeletedFalse(Integer userId);
 
-
     Product findProductByProductName(String productName);
+    Page<Product> findByDeletedFalse(Pageable pageable);
+
 }

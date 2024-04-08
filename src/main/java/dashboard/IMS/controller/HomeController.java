@@ -4,24 +4,26 @@ import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.ProductVariation;
 import dashboard.IMS.entity.Sales;
-import dashboard.IMS.entity.User;
 import dashboard.IMS.repository.ProductRepository;
 import dashboard.IMS.repository.ProductVariationRepository;
 import dashboard.IMS.repository.SalesRepository;
 import dashboard.IMS.service.ProductService;
+
+import dashboard.IMS.service.SalesService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Pageable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Controller class for handling HTTP requests related to navigation.
@@ -44,6 +46,9 @@ public class HomeController {
 
     @Autowired
     private SalesRepository salesRepository;
+
+    @Autowired
+    private SalesService salesService;
 
     public HomeController(ProductService productService) {
         this.productService = productService;
@@ -189,8 +194,33 @@ public class HomeController {
      * @return Name of the add product page.
      */
     @GetMapping("/add-product")
-    public String addProduct() {
-        return "addproduct";
+    public String addProduct(Model model, HttpServletRequest request) {
+        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
+
+        if (loggedInUser != null) {
+            model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
+            model.addAttribute("loggedInUser", loggedInUser);
+        }
+            return "addproduct";
+    }
+
+    /**
+     * Directs users to the edit product page.
+     *
+     * @return Name of the edit product page.
+     */
+    @GetMapping("edit-product/{productId}")
+    public String editProduct(@PathVariable Integer productId, Model model, HttpServletRequest request) {
+        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
+
+        if (loggedInUser != null) {
+            Product product = productService.getProductById(productId);
+            model.addAttribute("product", product);
+
+            model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
+            model.addAttribute("loggedInUser", loggedInUser);
+        }
+        return "editproduct";
     }
 
     /**
@@ -200,13 +230,19 @@ public class HomeController {
      * @return Name of the sales report page.
      */
     @GetMapping("/sales-report")
-    public String salesReport(Model model, HttpServletRequest request) {
+    public String salesReport(Model model, HttpServletRequest request, Pageable pageable, @RequestParam(defaultValue = "0") int page) {
         // Retrieve the logged-in user from the session
         UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
 
         // Check if the logged-in user is valid
         if (loggedInUser != null) {
             // Fetch the list of sales associated with the logged-in user from the repository
+            pageable = PageRequest.of(page, 5); // 5 items per page
+
+            Page<Sales> salesPage = salesService.getSales(pageable);
+
+            model.addAttribute("salesPage", salesPage);
+
             List<Sales> salesList = salesRepository.findAllByUserId(loggedInUser.getId());
 
             model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
@@ -270,7 +306,7 @@ public class HomeController {
      * @return Name of the product list page.
      */
     @GetMapping("/products")
-    public String productList(Model model, HttpServletRequest request) {
+    public String productList(Model model, HttpServletRequest request, @RequestParam(defaultValue = "0") int page) {
 
         // Retrieve the logged-in user from the session
         UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
@@ -278,6 +314,10 @@ public class HomeController {
             // Redirect to login if user not logged in
             return "redirect:/login";
         }
+
+        Pageable pageable = PageRequest.of(page, 5); // 5 items per page
+        Page<Product> productsPage = productService.getProducts(pageable);
+        model.addAttribute("productsPage", productsPage);
 
         // Add the authenticatedUser to the model if needed for the view
         model.addAttribute("loggedInUser", loggedInUser);

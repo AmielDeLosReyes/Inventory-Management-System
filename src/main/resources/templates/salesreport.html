@@ -136,71 +136,80 @@
         
 
         <div class="row row-sm">
-            <!-- <div class="az-content-label mg-b-5">Striped Rows</div>
-            <p class="mg-b-20">Add zebra-striping to any table row.</p> -->
-  
-            <div class="table-responsive">
-              <table class="table table-striped mg-b-0">
-                <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Photo</th>
-                  <th>Name</th>
-                  <th>Cost</th>
-                  <th>Revenue</th>
-                  <th>Quantity</th>
-                  <th>Type</th> <!-- New column for type of sale -->
-                  <th>Profit</th>
-                  <th>Transaction Date</th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Iterate over each sales record -->
-                <tr th:each="sale, index : ${salesList}">
-                  <td th:text="${index.index + 1}">ID</td>
-                  <!-- Add photo column if available -->
-                  <td>
-                    <!-- Check if photo exists -->
-                    <img th:if="${sale.productImageUrl != null}" th:src="${sale.productImageUrl}" alt="Product Photo" style="width: 100px; height: 100px;"/>
-                  </td>
-                  <!-- Display product name -->
-                  <td th:text="${sale.productName}">Product Name</td>
-                  <!-- Display cost -->
-                  <td th:text="${sale.totalCost}">Cost</td>
-                  <!-- Display revenue -->
-                  <td th:text="${sale.totalRevenue}">Revenue</td>
-                  <!-- Display quantity -->
-                  <td th:text="${sale.quantitySold}">Quantity</td>
-                  <!-- Display type of sale -->
-                  <td th:text="${sale.isRefund ? 'Refund' : 'Sale'}">Type</td> <!-- Display 'Refund' if isRefund is true, otherwise display 'Sale' -->
-                  <!-- Display profit -->
-                  <td th:text="${sale.totalProfit}">Profit</td>
-                  <!-- Display transaction date -->
-                  <td th:text="${#temporals.format(sale.transactionDate, 'MMMM, d, yyyy') + ' at ' + #temporals.format(sale.transactionDate, 'h:mma')}">Transaction Date</td>
-                </tr>
-                </tbody>
-              </table>
+          <div class="table-responsive">
+            <table class="table table-striped mg-b-0">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Cost</th>
+                <th>Revenue</th>
+                <th>Quantity</th>
+                <th>Type</th> <!-- New column for type of sale -->
+                <th>Profit</th>
+                <th>Transaction Date</th>
+              </tr>
+              </thead>
+              <tbody>
+              <!-- Iterate over each sales record -->
+              <tr th:each="sale, stat : ${salesPage.content}">
+                <td th:text="${stat.count}">ID</td>
+                <!-- Add photo column if available -->
+                <td>
+                  <!-- Check if photo exists -->
+                  <img th:if="${sale.productImageUrl != null}" th:src="${sale.productImageUrl}" alt="Product Photo" style="width: 100px; height: 100px;"/>
+                </td>
+                <!-- Display product name -->
+                <td th:text="${sale.productName}">Product Name</td>
+                <!-- Display cost -->
+                <td th:text="${sale.totalCost}">Cost</td>
+                <!-- Display revenue -->
+                <td th:text="${sale.totalRevenue}">Revenue</td>
+                <!-- Display quantity -->
+                <td th:text="${sale.quantitySold}">Quantity</td>
+                <!-- Display type of sale -->
+                <td th:text="${sale.isRefund ? 'Refund' : 'Sale'}">Type</td> <!-- Display 'Refund' if isRefund is true, otherwise display 'Sale' -->
+                <!-- Display profit -->
+                <td th:text="${sale.totalProfit}">Profit</td>
+                <!-- Display transaction date -->
+                <td th:text="${#temporals.format(sale.transactionDate, 'MMMM, d, yyyy') + ' at ' + #temporals.format(sale.transactionDate, 'h:mma')}">Transaction Date</td>
+              </tr>
+              </tbody>
+            </table>
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${salesPage.first ? 'disabled' : ''}">
+                  <a class="page-link" th:href="@{/sales-report(page=${salesPage.number - 1})}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, salesPage.totalPages - 1)}"
+                    th:classappend="${pageNumber == salesPage.number ? 'active' : ''}">
+                  <a class="page-link" th:href="@{/sales-report(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${salesPage.last ? 'disabled' : ''}">
+                  <a class="page-link" th:href="@{/sales-report(page=${salesPage.number + 1})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
 
         <br>
-        <div style="display: flex; justify-content: center;">
-            <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#"><i class="icon ion-ios-arrow-back"></i></a></li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#"><i class="icon ion-ios-arrow-forward"></i></a></li>
-          </ul>
-        </div>
+
             </div><!-- bd -->
         </div><!-- row -->
         
       </div><!-- az-content-body -->
 
-      <div class="az-footer ht-40">
-        <div class="container-fluid pd-t-0-f ht-100p">
-          <span>&copy; 2021 Azia Responsive Bootstrap 5 Dashboard Template</span>
-        </div><!-- container -->
-      </div><!-- az-footer -->
+    <div class="az-footer pd-b-10">
+      <div class="container">
+        <span style="text-align:center;">&copy; 2024 Inventory Management System</span>
+      </div><!-- container -->
+    </div><!-- az-footer -->
     
 
     <script src="jquery/jquery.min.js"></script>

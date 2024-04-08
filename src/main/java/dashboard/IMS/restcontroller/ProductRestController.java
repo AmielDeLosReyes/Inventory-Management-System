@@ -49,16 +49,16 @@ public class ProductRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(addedProduct);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
-        // Update an existing product in the database using the ProductService
-        Product updatedProduct = productService.updateProduct(id, product);
-        if (updatedProduct != null) {
-            return ResponseEntity.ok(updatedProduct);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<Product> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
+//        // Update an existing product in the database using the ProductService
+//        Product updatedProduct = productService.updateProduct(id, product);
+//        if (updatedProduct != null) {
+//            return ResponseEntity.ok(updatedProduct);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {

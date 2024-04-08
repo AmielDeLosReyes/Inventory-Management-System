@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -95,24 +95,29 @@
         <div class="az-header-right">
 
             <div class="dropdown az-profile-menu">
-                <a href="" class="az-img-user"><img src="face4.jpeg" alt=""></a>
+                <a href="" class="az-img-user">
+                    <img th:src="${loggedInUser.profilePicture != null ? loggedInUser.profilePicture : '/img/default.png'}" alt="">
+
+                </a>
                 <div class="dropdown-menu">
                     <div class="az-dropdown-header d-sm-none">
                         <a href="" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
                     </div>
                     <div class="az-header-profile">
                         <div class="az-img-user">
-                            <img src="face4.jpeg" alt="">
+                            <img th:src="${loggedInUser.profilePicture != null ? loggedInUser.profilePicture : '/img/default.png'}" alt="">
+
+
                         </div><!-- az-img-user -->
-                        <h6>Aziana Pechon</h6>
+                        <h6 th:text="${loggedInUser.fullName}"></h6>
                         <span>Premium Member</span>
                     </div><!-- az-header-profile -->
 
                     <a href="" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a>
-                    <a href="" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
-                    <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
-                    <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>
-                    <a href="page-signin" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+                    <a th:href="@{/editProfile}" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
+                    <!--          <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>-->
+                    <!--          <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>-->
+                    <a href="/logout" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
                 </div><!-- dropdown-menu -->
             </div>
         </div><!-- az-header-right -->
@@ -163,36 +168,6 @@
             }
 
         </script>
-
-
-<!--        <div class="wd-200 mg-b-20">-->
-<!--            <label class="form-label">Size</label>-->
-<!--            <select class="form-control select2-no-search" name="size">-->
-<!--                <option label="Choose one"></option>-->
-<!--                <option value="1">XS</option>-->
-<!--                <option value="2">Small</option>-->
-<!--                <option value="3">Medium</option>-->
-<!--                <option value="4">Large</option>-->
-<!--            </select>-->
-<!--        </div>&lt;!&ndash; col-4 &ndash;&gt;-->
-
-<!--        <div class="wd-200 mg-b-20">-->
-<!--            <label class="form-label">Color</label>-->
-<!--            <select class="form-control select2-no-search" name="color">-->
-<!--                <option label="Choose one"></option>-->
-<!--                <option value="1">Black</option>-->
-<!--                <option value="2">White</option>-->
-<!--                <option value="3">Red</option>-->
-<!--                <option value="4">Blue</option>-->
-<!--            </select>-->
-<!--        </div>&lt;!&ndash; col-4 &ndash;&gt;-->
-<!--        <br/>-->
-
-
-<!--        <div class="wd-200 mg-b-20">-->
-<!--            <label for="quantity" class="form-label">Quantity:</label>-->
-<!--            <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1">-->
-<!--        </div>-->
 
         <div id="variationContainer">
             <div class="variation">
@@ -287,11 +262,11 @@
 
 </div>
 
-<div class="az-footer ht-40">
-    <div class="container-fluid pd-t-0-f ht-100p">
-        <span>&copy; 2021 Azia Responsive Bootstrap 5 Dashboard Template</span>
-    </div>
-</div>
+<div class="az-footer pd-b-10">
+    <div class="container">
+        <span style="text-align:center;">&copy; 2024 Inventory Management System</span>
+    </div><!-- container -->
+</div><!-- az-footer -->
 
 <script src="jquery/jquery.min.js"></script>
 <script src="js/datepicker/datepicker.js"></script>

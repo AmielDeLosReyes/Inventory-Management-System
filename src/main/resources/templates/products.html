@@ -221,7 +221,8 @@
                             </div>
                             <div class="col-sm-6 col-md-2">
                                 <div class="button-container">
-                                    <button class="btn btn-info btn-block">Edit</button>
+                                    <a th:href="@{'/edit-product/' + ${product.id}}" class="btn btn-info btn-block">Edit</a>
+
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-2">
@@ -238,24 +239,16 @@
 
 
         <br>
-            <div style="display: flex; justify-content: center;">
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#"><i class="icon ion-ios-arrow-back"></i></a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#"><i class="icon ion-ios-arrow-forward"></i></a></li>
-                </ul>
-            </div>
+
         </div>
     </div>
 </div>
 
-<div class="az-footer ht-40">
-    <div class="container-fluid pd-t-0-f ht-100p">
-        <span>&copy; 2021 Azia Responsive Bootstrap 5 Dashboard Template</span>
-    </div>
-</div>
+<div class="az-footer pd-b-10">
+    <div class="container">
+        <span style="text-align:center;">&copy; 2024 Inventory Management System</span>
+    </div><!-- container -->
+</div><!-- az-footer -->
 
 <script src="jquery/jquery.min.js"></script>
 <script src="js/bootstrap/js/bootstrap.bundle.min.js"></script>

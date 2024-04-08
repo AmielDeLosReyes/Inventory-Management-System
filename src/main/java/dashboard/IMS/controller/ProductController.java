@@ -199,4 +199,20 @@ public class ProductController {
     }
 
 
+    @PostMapping("/edit-product/{productId}")
+    public String editProduct(@PathVariable Integer productId,
+                              @ModelAttribute Product updatedProduct,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            productService.updateProduct(productId, updatedProduct);
+            redirectAttributes.addFlashAttribute("message", "Product updated successfully");
+            redirectAttributes.addFlashAttribute("messageType", "success");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Failed to update product. Please try again.");
+            redirectAttributes.addFlashAttribute("messageType", "failure");
+        }
+        return "redirect:/products";
+    }
+
+
 }

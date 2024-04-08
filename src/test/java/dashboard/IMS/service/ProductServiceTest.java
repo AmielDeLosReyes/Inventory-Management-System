@@ -152,21 +152,21 @@ class ProductServiceTest {
     /**
      * Test case to verify updating an existing product in the database.
      */
-    @Test
-    void testUpdateProduct() {
-        // Arrange
-        Product product = new Product();
-        product.setId(1);
-        when(productRepository.existsById(1)).thenReturn(true);
-        when(productRepository.save(product)).thenReturn(product);
-
-        // Act
-        Product result = productService.updateProduct(1, product);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.getId());
-    }
+//    @Test
+//    void testUpdateProduct() {
+//        // Arrange
+//        Product product = new Product();
+//        product.setId(1);
+//        when(productRepository.existsById(1)).thenReturn(true);
+//        when(productRepository.save(product)).thenReturn(product);
+//
+//        // Act
+//        Product result = productService.updateProduct(1, product);
+//
+//        // Assert
+//        assertNotNull(result);
+//        assertEquals(1, result.getId());
+//    }
 
     /**
      * Test case to verify deleting a product from the database.

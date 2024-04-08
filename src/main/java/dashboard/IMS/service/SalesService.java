@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+
 /**
  * Service class for Sales entity.
  * Handles business logic related to Sales entities.
@@ -115,5 +119,9 @@ public class SalesService {
 
     public void deleteSalesByProductVariationId(Integer productVariationId) {
         salesRepository.deleteByProductVariationId(productVariationId);
+    }
+
+    public Page<Sales> getSales(Pageable pageable) {
+        return salesRepository.findAll(pageable);
     }
 }
