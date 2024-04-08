@@ -262,7 +262,6 @@ public class HomeController {
     }
 
 
-
     /**
      * Directs users to the product list page.
      * Retrieves product and product variation data owned by the logged-in user.

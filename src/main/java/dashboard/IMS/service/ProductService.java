@@ -125,15 +125,9 @@ public class ProductService {
      * @return The added product object.
      */
     @Transactional
-    public Product addProductWithVariationsFromFormData(String productName, String productDescription, MultipartFile[] images, int size, int color, int quantity, double cost, double sellingPrice, UserDTO userDTO) {
+    public Product addProductWithVariationsFromFormData(Product product, MultipartFile[] images, int size, int color, int quantity, UserDTO userDTO)
+    {
         try {
-            // Process form data and create Product entity
-            Product product = new Product();
-            product.setProductName(productName);
-            product.setProductDescription(productDescription);
-            product.setCostPrice(BigDecimal.valueOf(cost));
-            product.setSellingPrice(BigDecimal.valueOf(sellingPrice));
-
             // Load the user entity corresponding to the userDTO
             User user = userService.getUserById(userDTO.getId()); // Assuming there's a method to get user by ID in the userService
 
@@ -146,10 +140,10 @@ public class ProductService {
                 if (image != null && !image.isEmpty()) {
                     String filename = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
                     // Save the file to the server
-                    String uploadDir = "src/main/resources/static/images/" + productName;
+                    String uploadDir = "src/main/resources/static/images/" + product.getProductName();
                     FileUploadUtil.saveFile(uploadDir, filename, image);
                     // Get the URL of the saved file
-                    String imageUrl = "/images/" + productName + "/" + filename;
+                    String imageUrl = "/images/" + product.getProductName() + "/" + filename;
                     imageUrls.add(imageUrl);
                 }
             }
@@ -178,6 +172,7 @@ public class ProductService {
             return null;
         }
     }
+
 
 
 }

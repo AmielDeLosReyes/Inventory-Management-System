@@ -69,16 +69,17 @@ public class ProductController {
      * @return Redirect to the product list page after adding the product.
      */
     @PostMapping("add-product")
-    public String addProductForm(@RequestParam("productName") String productName,
-                                 @RequestParam("productDescription") String productDescription,
-                                 @RequestParam("images") MultipartFile[] images,
-                                 @RequestParam("size") int size,
-                                 @RequestParam("color") int color,
-                                 @RequestParam("quantity") int quantity,
-                                 @RequestParam("cost") double cost,
-                                 @RequestParam("sellingPrice") double sellingPrice,
-                                 RedirectAttributes redirectAttributes,
-                                 HttpServletRequest request) {
+    public String addProductForm(
+            @RequestParam("productName") String productName,
+            @RequestParam("productDescription") String productDescription,
+            @RequestParam("images") MultipartFile[] images,
+            @RequestParam("size[]") int[] sizes,
+            @RequestParam("color[]") int[] colors,
+            @RequestParam("quantity[]") int[] quantities,
+            @RequestParam("cost") double cost,
+            @RequestParam("sellingPrice") double sellingPrice,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
         try {
             // Get logged-in user from session
             UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
@@ -87,9 +88,23 @@ public class ProductController {
                 return "redirect:/login";
             }
 
+            // Create a new product
+            Product newProduct = new Product();
+            newProduct.setProductName(productName);
+            newProduct.setProductDescription(productDescription);
+            newProduct.setCostPrice(BigDecimal.valueOf(cost));
+            newProduct.setSellingPrice(BigDecimal.valueOf(sellingPrice));
+            // Save the new product
+            Product savedProduct = productRepository.save(newProduct);
+
             // Call the method in ProductService to handle product addition with variations
-            productService.addProductWithVariationsFromFormData(productName, productDescription, images,
-                    size, color, quantity, cost, sellingPrice, loggedInUser);
+            int iterations = Math.min(images.length, sizes.length);
+            iterations = Math.min(iterations, colors.length);
+            iterations = Math.min(iterations, quantities.length);
+            for (int i = 0; i < iterations; i++) {
+                productService.addProductWithVariationsFromFormData(savedProduct, images, sizes[i], colors[i], quantities[i], loggedInUser);
+            }
+
             return "redirect:/products";
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,6 +112,38 @@ public class ProductController {
             return "redirect:/product/add-product";
         }
     }
+
+
+
+//    @PostMapping("add-product")
+//    public String addProductForm(@RequestParam("productName") String productName,
+//                                 @RequestParam("productDescription") String productDescription,
+//                                 @RequestParam("images") MultipartFile[] images,
+//                                 @RequestParam("size") int size,
+//                                 @RequestParam("color") int color,
+//                                 @RequestParam("quantity") int quantity,
+//                                 @RequestParam("cost") double cost,
+//                                 @RequestParam("sellingPrice") double sellingPrice,
+//                                 RedirectAttributes redirectAttributes,
+//                                 HttpServletRequest request) {
+//        try {
+//            // Get logged-in user from session
+//            UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
+//            if (loggedInUser == null) {
+//                // Redirect to login if user not logged in
+//                return "redirect:/login";
+//            }
+//
+//            // Call the method in ProductService to handle product addition with variations
+//            productService.addProductWithVariationsFromFormData(productName, productDescription, images,
+//                    size, color, quantity, cost, sellingPrice, loggedInUser);
+//            return "redirect:/products";
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            redirectAttributes.addFlashAttribute("error", "Failed to add product. Please try again.");
+//            return "redirect:/product/add-product";
+//        }
+//    }
 
 
     /**
@@ -135,15 +182,6 @@ public class ProductController {
             // Add success message
             redirectAttributes.addFlashAttribute("message", "Successfully deleted the item");
             redirectAttributes.addFlashAttribute("messageType", "success");
-
-            // Delete the sales records associated with the product variations of the product
-            for (ProductVariation productVariation : productToDelete.getProductVariations()) {
-                salesService.deleteSalesByProductVariationId(productVariation.getId());
-            }
-
-            // Delete the product and its variations
-            productVariationService.deleteProductVariation(id);
-            productService.deleteProduct(id);
 
             // Add success message
             redirectAttributes.addFlashAttribute("message", "Successfully deleted the item");

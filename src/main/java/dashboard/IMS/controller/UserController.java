@@ -80,9 +80,6 @@ public class UserController {
         // Authenticate user
         UserDTO authenticatedUser = userService.loginUser(username, password);
 
-        // Debug Log
-        System.out.println("Authenticated User after login attempt: " + authenticatedUser);
-
         if (authenticatedUser != null) {
             // Update last login timestamp
             Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
@@ -97,11 +94,13 @@ public class UserController {
 
             return "redirect:/";
         } else {
-            // Authentication failed, add error message to the model and return to the login page
-            model.addAttribute("error", "Invalid username or password");
-            return "/login";
+            // Authentication failed, add error message to the flash attribute and redirect to login page
+            redirectAttributes.addFlashAttribute("error", "Invalid username or password");
+            redirectAttributes.addFlashAttribute("messageType", "failure"); // Make sure to set the messageType to 'failure'
+            return "redirect:/login";
         }
     }
+
 
     /**
      * Logs out the current user and redirects to the login page.

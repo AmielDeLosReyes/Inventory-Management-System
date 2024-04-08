@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90680653-2"></script>
@@ -39,6 +39,14 @@
         <div class="az-signin-header">
           <h2>Welcome back!</h2>
           <h4>Please sign in to continue</h4>
+          <!-- Failure Alert -->
+          <div th:if="${error != null and messageType == 'failure'}" class="alert alert-danger alert-dismissible fade show" role="alert" id="failureAlert">
+            <strong>Failed!</strong> <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- End Alert -->
 
           <form action="/login" method="post"> <!-- Updated form action -->
             <div class="form-group">
