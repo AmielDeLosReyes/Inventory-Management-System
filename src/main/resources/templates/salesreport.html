@@ -123,10 +123,13 @@
         <div class="d-flex justify-content-between align-items-center">
           <h2 class="az-content-title tx-24 mg-b-5">Sales Report</h2>
           <div>
-              <button class="btn btn-danger" onclick="exportToPDF()">
-                  <i class="fas fa-file-pdf"></i> PDF
+            <form action="/sales-report/pdf" method="get">
+              <button type="submit" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> PDF
               </button>
-              <button class="btn btn-success" onclick="exportToExcel()">
+            </form>
+
+            <button class="btn btn-success" onclick="exportToExcel()">
                   <i class="fas fa-file-excel"></i> Excel
               </button>
           </div>
@@ -137,7 +140,7 @@
 
         <div class="row row-sm">
           <div class="table-responsive">
-            <table class="table table-striped mg-b-0">
+            <table id="sales-report-table" class="table table-striped mg-b-0">
               <thead>
               <tr>
                 <th>ID</th>
@@ -153,8 +156,9 @@
               </thead>
               <tbody>
               <!-- Iterate over each sales record -->
+              <!-- Iterate over each sales record -->
               <tr th:each="sale, stat : ${salesPage.content}">
-                <td th:text="${stat.count}">ID</td>
+                <td th:text="${startingId + stat.count}">ID</td>
                 <!-- Add photo column if available -->
                 <td>
                   <!-- Check if photo exists -->
@@ -197,7 +201,6 @@
               </ul>
             </nav>
           </div>
-
         <br>
 
             </div><!-- bd -->
@@ -210,7 +213,7 @@
         <span style="text-align:center;">&copy; 2024 Inventory Management System</span>
       </div><!-- container -->
     </div><!-- az-footer -->
-    
+
 
     <script src="jquery/jquery.min.js"></script>
     <script src="js/bootstrap/js/bootstrap.bundle.min.js"></script>

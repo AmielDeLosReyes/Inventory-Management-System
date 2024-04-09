@@ -243,7 +243,13 @@ public class HomeController {
 
             model.addAttribute("salesPage", salesPage);
 
-            List<Sales> salesList = salesRepository.findAllByUserId(loggedInUser.getId());
+
+            List<Sales> salesList = salesPage.getContent(); // Get sales list from page
+
+            // Calculate the starting ID for this page
+            int startingId = page * 5; // Change here
+
+            model.addAttribute("startingId", startingId);
 
             model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
             model.addAttribute("loggedInUser", loggedInUser);

@@ -77,4 +77,8 @@ public class Sales {
     public void setIsRefund(boolean isRefund) {
         this.isRefund = isRefund;
     }
+
+    public boolean isRefund() {
+        return false;
+    }
 }

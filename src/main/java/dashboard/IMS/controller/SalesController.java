@@ -1,5 +1,6 @@
 package dashboard.IMS.controller;
 
+import com.itextpdf.text.DocumentException;
 import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.ProductVariation;
@@ -8,21 +9,40 @@ import dashboard.IMS.entity.User;
 import dashboard.IMS.repository.ProductVariationRepository;
 import dashboard.IMS.repository.SalesRepository;
 import dashboard.IMS.repository.UserRepository;
+import dashboard.IMS.service.SalesService;
 import dashboard.IMS.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Pageable;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
+import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
 import java.util.Optional;
+import dashboard.IMS.utilities.PdfUtil;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Controller
 public class SalesController {
@@ -37,6 +57,9 @@ public class SalesController {
 
     @Autowired
     private UserRepository userRepository; // Autowire UserRepository
+
+    @Autowired
+    private SalesService salesService; // Autowire SalesService
 
 
     /**
@@ -235,6 +258,38 @@ public class SalesController {
     }
 
 
+    @GetMapping("/sales-report/pdf")
+    public void salesReportPdf(HttpServletRequest request, HttpServletResponse response) throws DocumentException, IOException {
+        // Retrieve the logged-in user from the session
+        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
 
+        // Check if the logged-in user is valid
+        if (loggedInUser != null) {
+            // Fetch all the sales associated with the logged-in user from the repository
+            List<Sales> salesList = salesRepository.findAllByUserId(loggedInUser.getId());
+
+            // Set the product name for each sales record
+            for (Sales sale : salesList) {
+                ProductVariation productVariation = productVariationRepository.findById(sale.getProductVariationId()).orElse(null);
+                if (productVariation != null) {
+                    Product product = productVariation.getProduct();
+                    if (product != null) {
+                        sale.setProductName(product.getProductName());
+                    }
+                }
+            }
+
+            // Generate PDF
+            byte[] pdfBytes = PdfUtil.generateSalesReportPdf(salesList);
+
+            // Set response headers
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=\"sales-report.pdf\"");
+
+            // Write PDF bytes to response output stream
+            response.getOutputStream().write(pdfBytes);
+            response.getOutputStream().flush();
+        }
+    }
 
 }
