@@ -11,38 +11,26 @@ import dashboard.IMS.repository.SalesRepository;
 import dashboard.IMS.repository.UserRepository;
 import dashboard.IMS.service.SalesService;
 import dashboard.IMS.service.UserService;
+import dashboard.IMS.utilities.ExcelUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.data.domain.Pageable;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
-import java.util.HashMap;
 import java.util.List;
 
-import java.util.Map;
 import java.util.Optional;
 import dashboard.IMS.utilities.PdfUtil;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring6.SpringTemplateEngine;
+
 
 @Controller
 public class SalesController {
@@ -158,7 +146,6 @@ public class SalesController {
                                          @RequestParam("quantity") Integer quantity,
                                          RedirectAttributes redirectAttributes,
                                          HttpServletRequest request) {
-
         // Retrieve the logged-in user from the session attribute
         UserDTO loggedInUserDTO = (UserDTO) request.getSession().getAttribute("loggedInUser");
 
@@ -195,7 +182,7 @@ public class SalesController {
                     .mapToInt(Sales::getQuantityRefunded)
                     .sum();
 
-            if (totalSoldQuantity - totalRefundedQuantity < quantity) {
+            if (totalSoldQuantity - totalRefundedQuantity - quantity < 0) {
                 redirectAttributes.addFlashAttribute("message", "Refund quantity cannot be greater than total sold quantity.");
                 redirectAttributes.addFlashAttribute("messageType", "failure");
                 return "redirect:/products";
@@ -205,7 +192,7 @@ public class SalesController {
             for (Sales salesRecord : salesRecords) {
                 if (salesRecord.getQuantitySold() != null && salesRecord.getQuantityRefunded() != null && remainingQuantityToRefund > 0) {
                     int quantitySold = salesRecord.getQuantitySold();
-                    int quantityRefunded = salesRecord.getQuantityRefunded() != null ? salesRecord.getQuantityRefunded() : 0;
+                    int quantityRefunded = salesRecord.getQuantityRefunded();
                     int quantityAvailableForRefund = quantitySold - quantityRefunded;
 
                     int quantityToRefund = Math.min(quantityAvailableForRefund, remainingQuantityToRefund);
@@ -241,6 +228,13 @@ public class SalesController {
 
                         // Update the remaining quantity to refund
                         remainingQuantityToRefund -= quantityToRefund;
+
+                        System.out.println("Quantity sold: " + quantitySold);
+                        System.out.println("Quantity refunded: " + quantityRefunded);
+                        System.out.println("Quantity available for refund: " + quantityAvailableForRefund);
+                        System.out.println("Quantity to refund: " + quantityToRefund);
+
+                        System.out.println("Remaining quantity to refund: " + remainingQuantityToRefund);
                     }
                 }
             }
@@ -288,6 +282,41 @@ public class SalesController {
 
             // Write PDF bytes to response output stream
             response.getOutputStream().write(pdfBytes);
+            response.getOutputStream().flush();
+        }
+    }
+
+
+    @GetMapping("/sales-report/excel")
+    public void salesReportExcel(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Retrieve the logged-in user from the session
+        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
+
+        // Check if the logged-in user is valid
+        if (loggedInUser != null) {
+            // Fetch all the sales associated with the logged-in user from the repository
+            List<Sales> salesList = salesRepository.findAllByUserId(loggedInUser.getId());
+
+            // Set the product name for each sales record
+            for (Sales sale : salesList) {
+                ProductVariation productVariation = productVariationRepository.findById(sale.getProductVariationId()).orElse(null);
+                if (productVariation != null) {
+                    Product product = productVariation.getProduct();
+                    if (product != null) {
+                        sale.setProductName(product.getProductName());
+                    }
+                }
+            }
+
+            // Generate Excel
+            byte[] excelBytes = ExcelUtil.generateSalesReportExcel(salesList);
+
+            // Set response headers
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=\"sales-report.xlsx\"");
+
+            // Write Excel bytes to response output stream
+            response.getOutputStream().write(excelBytes);
             response.getOutputStream().flush();
         }
     }

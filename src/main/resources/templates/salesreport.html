@@ -122,16 +122,17 @@
       <div class="az-content-body az-content-body-dashboard-six">
         <div class="d-flex justify-content-between align-items-center">
           <h2 class="az-content-title tx-24 mg-b-5">Sales Report</h2>
-          <div>
-            <form action="/sales-report/pdf" method="get">
+          <div class="d-flex">
+            <form action="/sales-report/pdf" method="get" class="mr-2">
               <button type="submit" class="btn btn-danger">
                 <i class="fas fa-file-pdf"></i> PDF
               </button>
             </form>
-
-            <button class="btn btn-success" onclick="exportToExcel()">
-                  <i class="fas fa-file-excel"></i> Excel
+            <form action="/sales-report/excel" method="get">
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Excel
               </button>
+            </form>
           </div>
       </div>
         
