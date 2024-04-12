@@ -30,8 +30,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -404,9 +406,12 @@ public class SalesController {
             // Generate PDF
             byte[] pdfBytes = PdfUtil.generateSalesReportPdf(salesList);
 
+            // Get current date and format it as a string
+            String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
             // Set response headers
             response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", "attachment; filename=\"sales-report.pdf\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"sales-report-" + currentDate + ".pdf\"");
 
             // Write PDF bytes to response output stream
             response.getOutputStream().write(pdfBytes);
@@ -448,9 +453,12 @@ public class SalesController {
             // Generate Excel
             byte[] excelBytes = ExcelUtil.generateSalesReportExcel(salesList);
 
+            // Get current date and format it as a string
+            String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
             // Set response headers
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=\"sales-report.xlsx\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"sales-report-" + currentDate + ".xlsx\"");
 
             // Write Excel bytes to response output stream
             response.getOutputStream().write(excelBytes);
