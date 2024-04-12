@@ -15,10 +15,16 @@ import dashboard.IMS.utilities.ExcelUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -26,12 +32,19 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
+import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
 import java.util.Optional;
 import dashboard.IMS.utilities.PdfUtil;
 
-
+/**
+ * Controller class for handling sales-related requests.
+ *
+ * @author Amiel De Los Reyes
+ * @date 02/20/2024
+ */
 @Controller
 public class SalesController {
     @Autowired
@@ -50,6 +63,89 @@ public class SalesController {
     private SalesService salesService; // Autowire SalesService
 
 
+
+    /**
+     * Directs users to the sales report page.
+     * Fetches sales data associated with the logged-in user and prepares it for display.
+     *
+     * @return Name of the sales report page.
+     */
+    @GetMapping("/sales-report")
+    @ResponseStatus(HttpStatus.OK)
+    public String salesReport(Model model, HttpServletRequest request, Pageable pageable, @RequestParam(defaultValue = "0") int page) {
+        // Retrieve the logged-in user from the session
+        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
+
+        // Check if the logged-in user is valid
+        if (loggedInUser != null) {
+            // Fetch the list of sales associated with the logged-in user from the repository
+            pageable = PageRequest.of(page, 5); // 5 items per page
+
+            Page<Sales> salesPage = salesService.getSales(loggedInUser, pageable);
+
+
+            model.addAttribute("salesPage", salesPage);
+
+
+            List<Sales> salesList = salesPage.getContent(); // Get sales list from page
+
+            // Calculate the starting ID for this page
+            int startingId = page * 5; // Change here
+
+            model.addAttribute("startingId", startingId);
+
+            model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
+            model.addAttribute("loggedInUser", loggedInUser);
+
+            // Create a map to store product image URLs
+            Map<Integer, String> productImageUrls = new HashMap<>();
+
+            // For each sale, fetch the corresponding product details
+            for (Sales sale : salesList) {
+                // Retrieve the product variation using its ID
+                ProductVariation productVariation = productVariationRepository.findById(sale.getProductVariationId()).orElse(null);
+
+                if (productVariation != null) {
+                    // Access the product object associated with the product variation
+                    Product product = productVariation.getProduct();
+
+                    if (product != null) {
+                        // Set the product name in the sales object
+                        sale.setProductName(product.getProductName()); // Add this line
+                        // Retrieve the image URLs for the product
+                        String imageUrls = product.getImageUrls();
+                        if (imageUrls != null && !imageUrls.isEmpty()) {
+                            // Remove square brackets if present
+                            imageUrls = imageUrls.replaceAll("\\[|\\]", "");
+                            String[] imageUrlArray = imageUrls.split(","); // Split by comma
+                            if (imageUrlArray.length > 0) {
+                                String firstImageUrl = imageUrlArray[0].trim(); // Get the first URL
+                                // Remove leading backslash if present
+                                if (firstImageUrl.startsWith("/")) {
+                                    firstImageUrl = firstImageUrl.substring(1);
+                                }
+                                // Store the image URL in the map
+                                productImageUrls.put(product.getId(), firstImageUrl);
+                                // Set the image URL in the sales object
+                                sale.setProductImageUrl(firstImageUrl);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Add the sales list and product image URLs to the model
+            model.addAttribute("salesList", salesList);
+            model.addAttribute("productImageUrls", productImageUrls);
+
+            // Return the view name
+            return "salesreport";
+        } else {
+            // If the user is not logged in, redirect to the login page
+            return "redirect:/login";
+        }
+    }
+
     /**
      * Handles the sale of a product variation.
      * Validates the sale and updates the database with the sale details.
@@ -61,6 +157,7 @@ public class SalesController {
      * @return Redirect to the sales report page after successful sale or to the products page with an error message.
      */
     @PostMapping("/sell-product-variation")
+    @ResponseStatus(HttpStatus.OK)
     public String sellProductVariation(@RequestParam("productVariationId") Integer productVariationId,
                                        @RequestParam("quantity") Integer quantity,
                                        RedirectAttributes redirectAttributes,
@@ -76,6 +173,17 @@ public class SalesController {
             // Retrieve the product variation using its ID
             Optional<ProductVariation> optionalProductVariation = productVariationRepository.findByIdAndProductUserId(productVariationId, loggedInUser.getId());
 
+            if (quantity == null) {
+                // If quantity is null, set messageType to "danger" and redirect
+                redirectAttributes.addFlashAttribute("message", "Quantity is required for the sale.");
+                redirectAttributes.addFlashAttribute("messageType", "danger");
+                return "redirect:/products";
+            } else if (quantity <= 0) {
+                // If quantity is zero or negative, set messageType to "danger" and redirect
+                redirectAttributes.addFlashAttribute("message", "Invalid quantity for the sale.");
+                redirectAttributes.addFlashAttribute("messageType", "danger");
+                return "redirect:/products";
+            }
             if (optionalProductVariation.isPresent()) {
                 ProductVariation productVariation = optionalProductVariation.get();
 
@@ -140,8 +248,18 @@ public class SalesController {
         return "redirect:/products";
     }
 
-
+    /**
+     * Handles the refund of a product variation.
+     * Validates the refund and updates the database with the refund details.
+     *
+     * @param productVariationId    The ID of the product variation to be refunded.
+     * @param quantity              The quantity to be refunded.
+     * @param redirectAttributes    Redirect attributes for passing messages.
+     * @param request               HTTP servlet request.
+     * @return Redirect to the sales report page after successful refund or to the products page with an error message.
+     */
     @PostMapping("/refund-product-variation")
+    @ResponseStatus(HttpStatus.OK)
     public String refundProductVariation(@RequestParam("productVariationId") Integer productVariationId,
                                          @RequestParam("quantity") Integer quantity,
                                          RedirectAttributes redirectAttributes,
@@ -252,7 +370,17 @@ public class SalesController {
     }
 
 
+    /**
+     * Generates a PDF report of all sales associated with the logged-in user.
+     * The PDF is sent as a response to the client.
+     *
+     * @param request  The HTTP servlet request.
+     * @param response The HTTP servlet response.
+     * @throws DocumentException If there is an error while generating the PDF.
+     * @throws IOException       If there is an error while writing the PDF to the response output stream.
+     */
     @GetMapping("/sales-report/pdf")
+    @ResponseStatus(HttpStatus.OK)
     public void salesReportPdf(HttpServletRequest request, HttpServletResponse response) throws DocumentException, IOException {
         // Retrieve the logged-in user from the session
         UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
@@ -287,7 +415,16 @@ public class SalesController {
     }
 
 
+    /**
+     * Generates an Excel report of all sales associated with the logged-in user.
+     * The Excel file is sent as a response to the client.
+     *
+     * @param request  The HTTP servlet request.
+     * @param response The HTTP servlet response.
+     * @throws IOException If there is an error while writing the Excel file to the response output stream.
+     */
     @GetMapping("/sales-report/excel")
+    @ResponseStatus(HttpStatus.OK)
     public void salesReportExcel(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Retrieve the logged-in user from the session
         UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");

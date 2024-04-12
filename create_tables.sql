@@ -36,7 +36,6 @@ CREATE TABLE users (
     full_name VARCHAR(100),
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP,
-    roles VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE sales (

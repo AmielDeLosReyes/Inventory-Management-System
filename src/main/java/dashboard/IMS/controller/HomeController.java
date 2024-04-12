@@ -3,23 +3,18 @@ package dashboard.IMS.controller;
 import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.Product;
 import dashboard.IMS.entity.ProductVariation;
-import dashboard.IMS.entity.Sales;
 import dashboard.IMS.repository.ProductRepository;
 import dashboard.IMS.repository.ProductVariationRepository;
 import dashboard.IMS.repository.SalesRepository;
 import dashboard.IMS.service.ProductService;
-
 import dashboard.IMS.service.SalesService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.data.domain.Pageable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +58,7 @@ public class HomeController {
      * @return Name of the index page.
      */
     @GetMapping("/")
+    @ResponseStatus(HttpStatus.OK)
     public String index(HttpServletRequest request, Model model) {
 
         // Retrieve the HttpSession
@@ -164,257 +160,6 @@ public class HomeController {
         return "index";
     }
 
-    /**
-     * Directs users to the login page.
-     *
-     * @return Name of the login page.
-     */
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    /**
-     * Directs users to the signup page.
-     * Creates a new UserDTO object and adds it to the model.
-     *
-     * @return Name of the signup page.
-     */
-    @GetMapping("/signup")
-    public String signup(Model model) {
-        // Create a new UserDTO object and add it to the model
-        UserDTO userDTO = new UserDTO();
-        model.addAttribute("userDTO", userDTO);
-        return "signup";
-    }
-
-    /**
-     * Directs users to the add product page.
-     *
-     * @return Name of the add product page.
-     */
-    @GetMapping("/add-product")
-    public String addProduct(Model model, HttpServletRequest request) {
-        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
-
-        if (loggedInUser != null) {
-            model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
-            model.addAttribute("loggedInUser", loggedInUser);
-        }
-            return "addproduct";
-    }
-
-    /**
-     * Directs users to the edit product page.
-     *
-     * @return Name of the edit product page.
-     */
-    @GetMapping("edit-product/{productId}")
-    public String editProduct(@PathVariable Integer productId, Model model, HttpServletRequest request) {
-        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
-
-        if (loggedInUser != null) {
-            Product product = productService.getProductById(productId);
-            model.addAttribute("product", product);
-
-            model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
-            model.addAttribute("loggedInUser", loggedInUser);
-        }
-        return "editproduct";
-    }
-
-    /**
-     * Directs users to the sales report page.
-     * Fetches sales data associated with the logged-in user and prepares it for display.
-     *
-     * @return Name of the sales report page.
-     */
-    @GetMapping("/sales-report")
-    public String salesReport(Model model, HttpServletRequest request, Pageable pageable, @RequestParam(defaultValue = "0") int page) {
-        // Retrieve the logged-in user from the session
-        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
-
-        // Check if the logged-in user is valid
-        if (loggedInUser != null) {
-            // Fetch the list of sales associated with the logged-in user from the repository
-            pageable = PageRequest.of(page, 5); // 5 items per page
-
-            Page<Sales> salesPage = salesService.getSales(pageable);
-
-            model.addAttribute("salesPage", salesPage);
-
-
-            List<Sales> salesList = salesPage.getContent(); // Get sales list from page
-
-            // Calculate the starting ID for this page
-            int startingId = page * 5; // Change here
-
-            model.addAttribute("startingId", startingId);
-
-            model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
-            model.addAttribute("loggedInUser", loggedInUser);
-
-            // Create a map to store product image URLs
-            Map<Integer, String> productImageUrls = new HashMap<>();
-
-            // For each sale, fetch the corresponding product details
-            for (Sales sale : salesList) {
-                // Retrieve the product variation using its ID
-                ProductVariation productVariation = productVariationRepository.findById(sale.getProductVariationId()).orElse(null);
-
-                if (productVariation != null) {
-                    // Access the product object associated with the product variation
-                    Product product = productVariation.getProduct();
-
-                    if (product != null) {
-                        // Set the product name in the sales object
-                        sale.setProductName(product.getProductName()); // Add this line
-                        // Retrieve the image URLs for the product
-                        String imageUrls = product.getImageUrls();
-                        if (imageUrls != null && !imageUrls.isEmpty()) {
-                            // Remove square brackets if present
-                            imageUrls = imageUrls.replaceAll("\\[|\\]", "");
-                            String[] imageUrlArray = imageUrls.split(","); // Split by comma
-                            if (imageUrlArray.length > 0) {
-                                String firstImageUrl = imageUrlArray[0].trim(); // Get the first URL
-                                // Remove leading backslash if present
-                                if (firstImageUrl.startsWith("/")) {
-                                    firstImageUrl = firstImageUrl.substring(1);
-                                }
-                                // Store the image URL in the map
-                                productImageUrls.put(product.getId(), firstImageUrl);
-                                // Set the image URL in the sales object
-                                sale.setProductImageUrl(firstImageUrl);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Add the sales list and product image URLs to the model
-            model.addAttribute("salesList", salesList);
-            model.addAttribute("productImageUrls", productImageUrls);
-
-            // Return the view name
-            return "salesreport";
-        } else {
-            // If the user is not logged in, redirect to the login page
-            return "redirect:/login";
-        }
-    }
-
-
-    /**
-     * Directs users to the product list page.
-     * Retrieves product and product variation data owned by the logged-in user.
-     * Prepares necessary data for display on the product list page.
-     *
-     * @return Name of the product list page.
-     */
-    @GetMapping("/products")
-    public String productList(Model model, HttpServletRequest request, @RequestParam(defaultValue = "0") int page) {
-
-        // Retrieve the logged-in user from the session
-        UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
-        if (loggedInUser == null) {
-            // Redirect to login if user not logged in
-            return "redirect:/login";
-        }
-
-        Pageable pageable = PageRequest.of(page, 5); // 5 items per page
-        Page<Product> productsPage = productService.getProducts(pageable);
-        model.addAttribute("productsPage", productsPage);
-
-        // Add the authenticatedUser to the model if needed for the view
-        model.addAttribute("loggedInUser", loggedInUser);
-
-        model.addAttribute("profilePicture", loggedInUser.getProfilePicture());
-
-        // Retrieve products owned by the logged-in user from the database
-        List<Product> products = productRepository.findByUserIdAndDeletedFalse(loggedInUser.getId());
-
-        // Retrieve all product variations owned by the logged-in user from the database
-        List<ProductVariation> productVariations = productVariationRepository.findAllByProductUserId(loggedInUser.getId());
-
-        // Retrieve total quantities of product variations owned by the logged-in user
-        List<Object[]> totalQuantities = productVariationRepository.getTotalQuantitiesByProductUserId(loggedInUser.getId());
-
-        // Create a map to store total quantities for each product
-        Map<Integer, Integer> productTotalQuantities = new HashMap<>();
-        for (Object[] row : totalQuantities) {
-            if (row.length < 2) {
-                // Handle the case when the row doesn't contain enough elements
-                // Maybe log an error or skip this row
-                continue; // Skip this row and continue with the next one
-            }
-
-            Integer productId;
-            if (row[0] instanceof ProductVariation) {
-                productId = ((ProductVariation) row[0]).getProduct().getId();
-            } else if (row[0] instanceof Integer) {
-                productId = (Integer) row[0];
-            } else {
-                // Handle the case when the type of row[0] is unexpected
-                // Maybe log an error or skip this row
-                continue; // Skip this row and continue with the next one
-            }
-
-            Integer totalQuantity = ((Number) row[1]).intValue();
-            productTotalQuantities.put(productId, totalQuantity);
-        }
-
-        // Extract the first image URL for each product
-        Map<Integer, String> productImageUrls = new HashMap<>();
-        for (Product product : products) {
-            String imageUrls = product.getImageUrls(); // Get the comma-separated list
-            System.out.println("Product ID: " + product.getId());
-            System.out.println("Image URLs: " + imageUrls);
-            if (imageUrls != null && !imageUrls.isEmpty()) {
-                // Remove square brackets if present
-                imageUrls = imageUrls.replaceAll("\\[|\\]", "");
-                String[] imageUrlArray = imageUrls.split(","); // Split by comma
-                System.out.println("Image URL Array Length: " + imageUrlArray.length);
-                if (imageUrlArray.length > 0) {
-                    String firstImageUrl = imageUrlArray[0].trim(); // Get the first URL
-                    // Remove leading backslash if present
-                    if (firstImageUrl.startsWith("/")) {
-                        firstImageUrl = firstImageUrl.substring(1);
-                    }
-                    System.out.println("First Image URL: " + firstImageUrl);
-                    productImageUrls.put(product.getId(), firstImageUrl);
-                } else {
-                    System.out.println("No image URLs found for product ID: " + product.getId());
-                }
-            } else {
-                System.out.println("No image URLs found for product ID: " + product.getId());
-            }
-
-            // Retrieve associated product variations for each product
-            List<ProductVariation> associatedProductVariations = productVariationRepository.findByProductId(product.getId());
-            // Set the retrieved product variations to the current product
-            product.setProductVariations(associatedProductVariations);
-        }
-
-        // Retrieve sales records associated with the logged-in user
-        List<Sales> salesRecords = salesRepository.findByUserId(loggedInUser.getId());
-
-        // Pass the sales records to the view
-        model.addAttribute("salesRecords", salesRecords);
-
-        // Pass the product variations to the view
-        model.addAttribute("productVariations", productVariations);
-        model.addAttribute("products", products);
-        model.addAttribute("productImageUrls", productImageUrls);
-        model.addAttribute("productTotalQuantities", productTotalQuantities); // Pass total quantities as an attribute
-
-        // Check if message exists in flash attributes
-        if (model.containsAttribute("message")) {
-            // Retrieve the message from flash attributes and add it to the model
-            model.addAttribute("message", model.getAttribute("message"));
-        }
-
-        return "products";
-    }
 
     /**
      * Directs users to the 404 error page.
@@ -422,6 +167,7 @@ public class HomeController {
      * @return Name of the 404 error page.
      */
     @GetMapping("/404")
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public String notFound() {
         return "404";
     }
@@ -432,6 +178,7 @@ public class HomeController {
      * @return Name of the blank page.
      */
     @GetMapping("/blank-page")
+    @ResponseStatus(HttpStatus.OK)
     public String blankPage() {
         return "blankpage";
     }

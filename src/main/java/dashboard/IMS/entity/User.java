@@ -4,6 +4,7 @@ import lombok.*;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,9 +45,6 @@ public class User {
     @Column(name = "last_login")
     private Timestamp lastLogin;
 
-    @Column(nullable = false)
-    private String roles;
-
     @Column(name = "profile_picture")
     private String profilePicture;  // Add this field to store the profile picture path
 
@@ -56,4 +54,5 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sales> sales;
+
 }

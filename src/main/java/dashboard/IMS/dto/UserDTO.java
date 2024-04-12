@@ -40,10 +40,9 @@ public class UserDTO {
 
     private Timestamp registrationDate;
     private Timestamp lastLogin;
-    private String roles;
     @Getter
     private String profilePicture; // Add this field to store the URL of the user's profile picture
-    // other fields...
+
 
     // getters and setters...
 

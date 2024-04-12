@@ -8,15 +8,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 
 /**
@@ -137,14 +136,36 @@ public class UserService {
             throw new IllegalArgumentException("Email already exists");
         }
 
-        // Encrypt the password before saving
+
+        // Hash the password before saving
         String password = userDTO.getPassword();
-        userDTO.setPassword(password);
+        String hashedPassword = hashPassword(password);
+        userDTO.setPassword(hashedPassword);
 
         // Set registration date
         userDTO.setRegistrationDate(new Timestamp(System.currentTimeMillis()));
 
         return createUser(userDTO);
+    }
+
+    private String hashPassword(String password) {
+        try {
+            // Create MessageDigest instance for SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            // Add password bytes to digest
+            md.update(password.getBytes());
+
+            // Get the hashed bytes
+            byte[] hashedBytes = md.digest();
+
+            // Convert bytes to Base64 for better string representation
+            return Base64.getEncoder().encodeToString(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            // Handle exception (e.g., throw RuntimeException)
+            return null;
+        }
     }
 
     /**
@@ -160,7 +181,7 @@ public class UserService {
 
         if (user != null) {
             // Check if the password matches
-            if (password.equals(user.getPassword())) {
+            if (verifyPassword(password, user.getPassword())) {
                 // Password matches, return the user DTO
                 return toDTO(user);
             }
@@ -169,6 +190,14 @@ public class UserService {
         // Authentication failed, return null
         return null;
     }
+
+    private boolean verifyPassword(String rawPassword, String hashedPassword) {
+        // Hash the raw password and compare with the stored hashed password
+        String hashedInputPassword = hashPassword(rawPassword);
+        assert hashedInputPassword != null;
+        return hashedInputPassword.equals(hashedPassword);
+    }
+
 
     /**
      * Logs out the current user and redirects to the login page.
@@ -238,5 +267,10 @@ public class UserService {
         }
     }
 
+    public User convertToEntity(UserDTO userDTO) {
+        User user = new User();
+        BeanUtils.copyProperties(userDTO, user);
+        return user;
+    }
 
 }

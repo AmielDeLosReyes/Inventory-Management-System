@@ -50,8 +50,7 @@
           <h1 class="az-logo">D'Baesic Apparel</h1>
           <h5>Inventory Management System</h5>
           <p>An inventory management system for a store streamlines inventory tracking, stock management, and order processing, ensuring efficient operations and timely customer service. By providing real-time insights into inventory levels and automating replenishment processes, the system helps businesses optimize stock levels, reduce costs, and minimize the risk of stockouts.</p>
-<!--          <p>Browse our site and see for yourself why you need Azia.</p>-->
-<!--          <a href="index.html" class="btn btn-outline-indigo">Learn More</a>-->
+
         </div>
       </div><!-- az-column-signup-left -->
       <div class="az-column-signup">
@@ -97,14 +96,6 @@
                      name="password"
                      th:field="*{password}">
               <p th:if="${#fields.hasErrors('password')}" class="text-danger" th:errors="*{password}">Password Error</p>
-            </div><!-- form-group -->
-            <div class="form-group">
-              <label>Role</label>
-              <select class="form-control select2-no-search" name="roles">
-                <option label="Choose one"></option>
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-              </select>
             </div><!-- form-group -->
             <br/>
             <button class="btn btn-az-primary btn-block">Create Account</button>

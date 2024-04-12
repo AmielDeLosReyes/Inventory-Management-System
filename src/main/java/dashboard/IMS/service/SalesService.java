@@ -1,9 +1,12 @@
 package dashboard.IMS.service;
 
 import dashboard.IMS.dto.SalesDTO;
+import dashboard.IMS.dto.UserDTO;
 import dashboard.IMS.entity.Sales;
+import dashboard.IMS.entity.User;
 import dashboard.IMS.repository.SalesRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +28,12 @@ import org.springframework.data.domain.Pageable;
 public class SalesService {
 
     private final SalesRepository salesRepository;
+    private final UserService userService;
 
-    public SalesService(SalesRepository salesRepository) {
+    @Autowired
+    public SalesService(SalesRepository salesRepository, UserService userService) {
         this.salesRepository = salesRepository;
+        this.userService = userService;
     }
 
     /**
@@ -121,7 +127,8 @@ public class SalesService {
         salesRepository.deleteByProductVariationId(productVariationId);
     }
 
-    public Page<Sales> getSales(Pageable pageable) {
-        return salesRepository.findAll(pageable);
+    public Page<Sales> getSales(UserDTO userDTO, Pageable pageable) {
+        User user = userService.convertToEntity(userDTO);
+        return salesRepository.findByUser(user, pageable);
     }
 }

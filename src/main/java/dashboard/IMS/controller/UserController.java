@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -30,6 +31,12 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 
+/**
+ * Controller class for handling user-related requests.
+ *
+ * @author Amiel De Los Reyes
+ * @date 02/20/2024
+ */
 @Controller
 public class UserController {
 
@@ -44,6 +51,32 @@ public class UserController {
 
 
     /**
+     * Directs users to the signup page.
+     * Creates a new UserDTO object and adds it to the model.
+     *
+     * @return Name of the signup page.
+     */
+    @GetMapping("/signup")
+    @ResponseStatus(HttpStatus.OK)
+    public String signup(Model model) {
+        // Create a new UserDTO object and add it to the model
+        UserDTO userDTO = new UserDTO();
+        model.addAttribute("userDTO", userDTO);
+        return "signup";
+    }
+
+    /**
+     * Directs users to the login page.
+     *
+     * @return Name of the login page.
+     */
+    @GetMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    public String loginPage() {
+        return "login";
+    }
+
+    /**
      * Handles user signup process.
      *
      * @param userDTO      UserDTO object containing user information.
@@ -52,6 +85,7 @@ public class UserController {
      * @return Redirect to the login page after successful signup or to the signup page with errors.
      */
     @PostMapping("/signup-user")
+    @ResponseStatus(HttpStatus.CREATED)
     public String signupUser(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
             return "signup";
@@ -76,6 +110,7 @@ public class UserController {
      * @return Redirect to the home page after successful login or to the login page with an error message.
      */
     @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
     public String login(@RequestParam String username, @RequestParam String password, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         // Authenticate user
         UserDTO authenticatedUser = userService.loginUser(username, password);
@@ -110,6 +145,7 @@ public class UserController {
      * @return Redirect to the login page after logout.
      */
     @GetMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         // Invalidate the user session
         request.getSession().invalidate();
@@ -126,6 +162,7 @@ public class UserController {
      * @return Name of the edit profile page.
      */
     @GetMapping("/editProfile")
+    @ResponseStatus(HttpStatus.OK)
     public String editProfile(HttpServletRequest request, Model model) {
         // Retrieve the HttpSession
         HttpSession session = request.getSession();
@@ -159,6 +196,7 @@ public class UserController {
      * @return Redirect to the home page after successful update or to the home page with an error message.
      */
     @PostMapping("/updateUserDetails")
+    @ResponseStatus(HttpStatus.OK)
     public String updateUserDetails(@RequestParam("profilePicture") MultipartFile profilePicture,
                                     @RequestParam("username") String username,
                                     @RequestParam("fullName") String fullName,
@@ -208,7 +246,14 @@ public class UserController {
     }
 
 
-    // Method to save profile picture
+    /**
+     * Saves the profile picture of a user.
+     *
+     * @param file     The profile picture file to be saved.
+     * @param username The username of the user.
+     * @return The URL of the saved profile picture.
+     * @throws IOException If there is an error while saving the file.
+     */
     private String saveProfilePicture(MultipartFile file, String username) throws IOException {
         if (file != null && !file.isEmpty()) {
             String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
