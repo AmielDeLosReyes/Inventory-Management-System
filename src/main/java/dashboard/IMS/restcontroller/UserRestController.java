@@ -35,6 +35,7 @@ import java.util.Objects;
  * @date 02/20/2024
  */
 @RestController
+@RequestMapping("/api")
 public class UserRestController {
     @Autowired
     private UserService userService;

@@ -14,8 +14,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.itextpdf.text.Chunk;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class PdfUtil {
     public static byte[] generateSalesReportPdf(List<Sales> salesList) throws DocumentException, IOException {
         Document document = new Document();

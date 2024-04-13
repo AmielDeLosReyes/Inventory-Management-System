@@ -27,6 +27,7 @@ import java.util.Map;
  * @date 02/20/2024
  */
 @RestController
+@RequestMapping("/api")
 public class HomeRestController {
 
     @Autowired

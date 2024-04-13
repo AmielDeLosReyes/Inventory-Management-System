@@ -33,7 +33,7 @@ import java.util.*;
  * Date: 02/26/2024
  */
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api")
 public class ProductRestController {
     @PersistenceContext
     private EntityManager entityManager;

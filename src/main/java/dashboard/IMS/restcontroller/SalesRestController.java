@@ -13,14 +13,12 @@ import dashboard.IMS.service.SalesService;
 import dashboard.IMS.service.UserService;
 import dashboard.IMS.utilities.ExcelUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -41,6 +39,7 @@ import dashboard.IMS.utilities.PdfUtil;
  * @date 02/20/2024
  */
 @RestController
+@RequestMapping("/api")
 public class SalesRestController {
 
     @Autowired
@@ -58,21 +57,23 @@ public class SalesRestController {
     @Autowired
     private SalesService salesService; // Autowire SalesService
 
+    @Autowired
+    private PdfUtil pdfUtil;
+
     /**
      * Fetches sales data associated with the logged-in user and prepares it for display.
      *
      * @param request HTTP servlet request.
-     * @param pageable Pagination information.
-     * @param page The page number.
+     * @param page    The page number.
      * @return Data for the sales report page.
      */
     @GetMapping("/sales-report")
-    public ResponseEntity<Map<String, Object>> salesReport(HttpServletRequest request, Pageable pageable, @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<Map<String, Object>> salesReport(HttpServletRequest request, @RequestParam(defaultValue = "0") int page) {
         Map<String, Object> response = new HashMap<>();
         UserDTO loggedInUser = (UserDTO) request.getSession().getAttribute("loggedInUser");
 
         if (loggedInUser != null) {
-            pageable = PageRequest.of(page, 5); // 5 items per page
+            Pageable pageable = PageRequest.of(page, 5); // 5 items per page
             Page<Sales> salesPage = salesService.getSales(loggedInUser, pageable);
             response.put("salesPage", salesPage);
 
@@ -236,9 +237,9 @@ public class SalesRestController {
                             salesRecord.setQuantityRefunded(quantityRefunded + quantityToRefund);
                             salesRepository.save(salesRecord);
 
-                            BigDecimal refundRevenue = salesRecord.getTotalRevenue().divide(BigDecimal.valueOf(quantitySold), RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(quantityToRefund));
-                            BigDecimal refundCost = salesRecord.getTotalCost().divide(BigDecimal.valueOf(quantitySold), RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(quantityToRefund));
-                            BigDecimal refundProfit = salesRecord.getTotalProfit().divide(BigDecimal.valueOf(quantitySold), RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(quantityToRefund));
+                            BigDecimal refundRevenue = salesRecord.getTotalRevenue() != null ? salesRecord.getTotalRevenue().divide(BigDecimal.valueOf(quantitySold), RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(quantityToRefund)) : BigDecimal.ZERO;
+                            BigDecimal refundCost = salesRecord.getTotalCost() != null ? salesRecord.getTotalCost().divide(BigDecimal.valueOf(quantitySold), RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(quantityToRefund)) : BigDecimal.ZERO;
+                            BigDecimal refundProfit = salesRecord.getTotalProfit() != null ? salesRecord.getTotalProfit().divide(BigDecimal.valueOf(quantitySold), RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(quantityToRefund)) : BigDecimal.ZERO;
 
                             Sales refundSales = Sales.builder()
                                     .productVariationId(productVariationId)

@@ -58,4 +58,5 @@ public class Product {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+
 }
