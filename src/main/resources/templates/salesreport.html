@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Meta -->
+    <meta name="description" content="Responsive Bootstrap 5 Dashboard Template">
+    <meta name="author" content="BootstrapDash">
+
+    <title>D'Baesic Apparel - Sales Report</title>
+
+    <!-- vendor css -->
+    <link href="css/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="css/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="css/typicons.font/typicons.css" rel="stylesheet">
+    <link href="css/jqvmap/jqvmap.min.css" rel="stylesheet">
+
+    <!-- azia CSS -->
+    <link rel="stylesheet" href="css/azia.css">
+
+    <style>
+      .az-content-body {
+          min-height: 100vh;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+      }
+
+      @media (max-width: 428px) {
+          .az-content-body {
+              overflow-y: auto;
+          }
+      }
+
+      .sizes-table {
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      .sizes-table td {
+          padding: 10px;
+          text-align: center;
+      }
+
+      .sizes-table i {
+          margin-right: 5px;
+      }
+
+      /* Add hover effect */
+      .sizes-table td:hover {
+          background-color: #f2f2f2;
+      }
+  </style>
+
+  </head>
+  <body class="az-body az-light" style="overflow-y: auto;">
+
+    
+    <div class="az-header">
+      <div class="container">
+        <div class="az-header-left">
+          <a href="/" class="az-logo"><span></span>D'Baesic Apparel</a>
+          <a href="" id="azMenuShow" class="az-header-menu-icon d-lg-none"><span></span></a>
+        </div><!-- az-header-left -->
+        <div class="az-header-menu">
+          <div class="az-header-menu-header">
+            <a href="/" class="az-logo"><span></span>D'Baesic Apparel</a>
+            <a href="" class="close">&times;</a>
+          </div><!-- az-header-menu-header -->
+          <ul class="nav">
+            <li class="nav-item">
+              <a href="/" class="nav-link"><i class="typcn typcn-home-outline"></i> Dashboard</a>
+             
+            </li>
+            <li class="nav-item">
+              <a href="products" class="nav-link"><i class="fas fa-tshirt"></i> &nbsp;&nbsp;Products</a>
+              
+            </li>
+            <li class="nav-item active show">
+              <a href="sales-report" class="nav-link"><i class="typcn typcn-news"></i> Sales Report</a>
+              
+            </li>
+           
+          </ul>
+        </div><!-- az-header-menu -->
+        <div class="az-header-right">
+
+          <div class="dropdown az-profile-menu">
+            <a href="" class="az-img-user">
+              <img th:src="${loggedInUser != null && loggedInUser.profilePicture != null ? loggedInUser.profilePicture : '/img/default.png'}" alt="">
+
+
+            </a>
+            <div class="dropdown-menu">
+              <div class="az-dropdown-header d-sm-none">
+                <a href="" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
+              </div>
+              <div class="az-header-profile">
+                <div class="az-img-user">
+                  <img th:src="${loggedInUser != null && loggedInUser.profilePicture != null ? loggedInUser.profilePicture : '/img/default.png'}" alt="">
+
+
+
+                </div><!-- az-img-user -->
+                <h6 th:text="${loggedInUser.fullName}"></h6>
+                <span>Premium Member</span>
+              </div><!-- az-header-profile -->
+
+              <a href="" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a>
+              <a th:href="@{/editProfile}" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
+              <!--          <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>-->
+              <!--          <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>-->
+              <a href="/logout" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+            </div><!-- dropdown-menu -->
+          </div>
+        </div><!-- az-header-right -->
+      </div><!-- container -->
+    </div><!-- az-header -->
+
+      <div class="az-content-body az-content-body-dashboard-six">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="az-content-title tx-24 mg-b-5">Sales Report</h2>
+          <div class="d-flex">
+            <form action="/sales-report/pdf" method="get" class="mr-2">
+              <button type="submit" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> PDF
+              </button>
+            </form>
+            <form action="/sales-report/excel" method="get">
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Excel
+              </button>
+            </form>
+          </div>
+      </div>
+        
+        <p class="mg-b-25">Your finance performance and monitoring dashboard.</p>
+        
+
+        <div class="row row-sm">
+          <div class="table-responsive">
+            <table id="sales-report-table" class="table table-striped mg-b-0">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Cost</th>
+                <th>Revenue</th>
+                <th>Quantity</th>
+                <th>Type</th> <!-- New column for type of sale -->
+                <th>Profit</th>
+                <th>Transaction Date</th>
+              </tr>
+              </thead>
+              <tbody>
+              <!-- Iterate over each sales record -->
+              <!-- Iterate over each sales record -->
+              <tr th:each="sale, stat : ${salesPage.content}">
+                <td th:text="${startingId + stat.count}">ID</td>
+                <!-- Add photo column if available -->
+                <td>
+                  <!-- Check if photo exists -->
+                  <img th:if="${sale.productImageUrl != null}" th:src="${sale.productImageUrl}" alt="Product Photo" style="width: 100px; height: 100px;"/>
+                </td>
+                <!-- Display product name -->
+                <td th:text="${sale.productName}">Product Name</td>
+                <!-- Display cost -->
+                <td th:text="${sale.totalCost}">Cost</td>
+                <!-- Display revenue -->
+                <td th:text="${sale.totalRevenue}">Revenue</td>
+                <!-- Display quantity -->
+                <td th:text="${sale.quantitySold}">Quantity</td>
+                <!-- Display type of sale -->
+                <td th:text="${sale.isRefund ? 'Refund' : 'Sale'}">Type</td> <!-- Display 'Refund' if isRefund is true, otherwise display 'Sale' -->
+                <!-- Display profit -->
+                <td th:text="${sale.totalProfit}">Profit</td>
+                <!-- Display transaction date -->
+                <td th:text="${#temporals.format(sale.transactionDate, 'MMMM, d, yyyy') + ' at ' + #temporals.format(sale.transactionDate, 'h:mma')}">Transaction Date</td>
+              </tr>
+              </tbody>
+            </table>
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${salesPage.first ? 'disabled' : ''}">
+                  <a class="page-link" th:href="@{/sales-report(page=${salesPage.number - 1})}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, salesPage.totalPages - 1)}"
+                    th:classappend="${pageNumber == salesPage.number ? 'active' : ''}">
+                  <a class="page-link" th:href="@{/sales-report(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${salesPage.last ? 'disabled' : ''}">
+                  <a class="page-link" th:href="@{/sales-report(page=${salesPage.number + 1})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        <br>
+
+            </div><!-- bd -->
+        </div><!-- row -->
+        
+      </div><!-- az-content-body -->
+
+    <div class="az-footer pd-b-10">
+      <div class="container">
+        <span style="text-align:center;">&copy; 2024 Inventory Management System</span>
+      </div><!-- container -->
+    </div><!-- az-footer -->
+
+
+    <script src="jquery/jquery.min.js"></script>
+    <script src="js/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/ionicons/ionicons.js"></script>
+    <script src="jquery/jquery.flot/jquery.flot.js"></script>
+    <script src="jquery/jquery.flot/jquery.flot.resize.js"></script>
+    <script src="jquery/peity/jquery.peity.min.js"></script>
+
+    <script src="js/jquery.cookie.js" type="text/javascript"></script>
+    <script src="js/azia.js"></script>
+    <script src="js/chart.flot.sampledata.js"></script>
+  </body>
+</html>

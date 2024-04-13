@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90680653-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-90680653-2');
+  </script>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Meta -->
+  <meta name="description" content="Responsive Bootstrap 5 Dashboard Template">
+  <meta name="author" content="BootstrapDash">
+
+  <title>D'Baesic Apparel - Home</title>
+
+  <!-- vendor css -->
+  <link href="css/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="css/ionicons/css/ionicons.min.css" rel="stylesheet">
+  <link href="css/typicons.font/typicons.css" rel="stylesheet">
+
+  <!-- azia CSS -->
+  <link rel="stylesheet" href="css/azia.css">
+
+</head>
+<body>
+
+<div class="az-header">
+  <div class="container">
+    <div class="az-header-left">
+      <a href="/" class="az-logo"><span></span>D'Baesic Apparel</a>
+      <a href="" id="azMenuShow" class="az-header-menu-icon d-lg-none"><span></span></a>
+    </div><!-- az-header-left -->
+    <div class="az-header-menu">
+      <div class="az-header-menu-header">
+        <a href="/" class="az-logo"><span></span>D'Baesic Apparel</a>
+        <a href="" class="close">&times;</a>
+      </div><!-- az-header-menu-header -->
+      <ul class="nav">
+        <li class="nav-item active show">
+          <a href="/" class="nav-link"><i class="typcn typcn-home-outline"></i> Dashboard</a>
+
+        </li>
+        <li class="nav-item">
+          <a href="products" class="nav-link"><i class="fas fa-tshirt"></i> &nbsp;&nbsp;Products</a>
+
+        </li>
+        <li class="nav-item">
+          <a href="sales-report" class="nav-link"><i class="typcn typcn-news"></i> Sales Report</a>
+
+        </li>
+
+      </ul>
+    </div><!-- az-header-menu -->
+    <div class="az-header-right">
+
+      <div class="dropdown az-profile-menu">
+        <a href="" class="az-img-user">
+          <img th:src="${authenticatedUser.profilePicture != null ? authenticatedUser.profilePicture : '/img/default.png'}" alt="">
+        </a>
+        <div class="dropdown-menu">
+          <div class="az-dropdown-header d-sm-none">
+            <a href="" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
+          </div>
+          <div class="az-header-profile">
+            <div class="az-img-user">
+              <img th:src="${authenticatedUser.profilePicture != null ? authenticatedUser.profilePicture : '/img/default.png'}" alt="">
+
+            </div><!-- az-img-user -->
+            <h6 th:text="${authenticatedUser.fullName}"></h6>
+            <span>Premium Member</span>
+          </div><!-- az-header-profile -->
+
+          <a href="" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a>
+          <a th:href="@{/editProfile}" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
+<!--          <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>-->
+<!--          <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>-->
+          <a href="/logout" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+        </div><!-- dropdown-menu -->
+      </div>
+    </div><!-- az-header-right -->
+  </div><!-- container -->
+</div><!-- az-header -->
+
+<div class="az-content az-content-profile">
+  <div class="container mn-ht-100p">
+    <div class="az-content-left az-content-left-profile">
+
+      <div class="az-profile-overview">
+        <div class="az-img-user">
+          <img th:src="${authenticatedUser.profilePicture != null ? authenticatedUser.profilePicture : '/img/default.png'}" alt="">
+        </div><!-- az-img-user -->
+        <div class="d-flex justify-content-between mg-b-20">
+          <div>
+            <h5 class="az-profile-name" th:text="${authenticatedUser.fullName}"></h5>
+          </div>
+          <div class="btn-icon-list">
+            <button class="btn btn-indigo btn-icon"><i class="typcn typcn-plus-outline"></i></button>
+            <button class="btn btn-primary btn-icon"><i class="typcn typcn-message"></i></button>
+          </div>
+        </div>
+
+<!--        <div class="az-profile-bio">-->
+<!--          Genius, Compiler, Powerful Multitasker, Fantasy Fruit Loop, Replacement President of a Major Soft Drink Manufacturer. <a href="">More</a>-->
+<!--        </div>&lt;!&ndash; az-profile-bio &ndash;&gt;-->
+
+        <hr class="mg-y-30">
+
+        <label class="az-content-label tx-13 mg-b-20">User Information</label>
+        <div class="az-profile-social-list">
+          <div class="media">
+            <div class="media-body">
+              <span><strong>Username:</strong></span>
+              <p th:text="${authenticatedUser.username}"></p>
+            </div>
+          </div><!-- media -->
+          <div class="media">
+            <div class="media-body">
+              <span><strong>Last Login:</strong></span>
+              <p th:text="${#dates.format(authenticatedUser.lastLogin, 'MMMM dd, yyyy h:mma')}"></p>
+            </div>
+          </div><!-- media -->
+          <div class="media">
+            <div class="media-body">
+              <span><strong>Registration Date:</strong></span>
+              <p th:text="${#dates.format(authenticatedUser.registrationDate, 'MMMM dd, yyyy h:mma')}"></p>
+            </div>
+          </div><!-- media -->
+          <div class="media">
+            <div class="media-body">
+              <span><strong>Email:</strong></span>
+              <p th:text="${authenticatedUser.email}"></p>
+            </div>
+          </div><!-- media -->
+        </div><!-- az-profile-social-list -->
+
+
+      </div><!-- az-profile-overview -->
+
+    </div><!-- az-content-left -->
+    <div class="az-content-body az-content-body-profile">
+      <nav class="nav az-nav-line">
+        <a href="#" class="nav-link active" data-bs-toggle="tab" id="productsTab">Products</a>
+      </nav>
+
+      <div class="az-profile-body">
+
+        <div id="productsTable" class="row mg-b-20">
+          <div class="table-responsive">
+            <table class="table table-striped mg-b-0">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Sizes</th>
+                <th>Total Stocks</th>
+
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="product, index : ${products}" th:if="${product.user?.id == authenticatedUser?.id}">
+              <th scope="row" th:text="${index.index + 1}"></th>
+                <!-- Product Photo -->
+                <td>
+                  <!-- Display the image using the corresponding image URL -->
+                  <img th:src="${productImageUrls.get(product.id)}" style="width: 100px; height: 100px;" />
+                </td>
+                <!-- Product Name -->
+                <td th:text="${product.productName}"></td>
+                <!-- Placeholder for sizes -->
+                <td>
+                  <table class="sizes-table">
+                    <tr>
+                      <!-- Iterate over each variation of the product -->
+                      <td th:each="variation : ${productVariations}" th:if="${variation.product.id == product.id}">
+                        <!-- Display size name and quantity -->
+                        <span>
+                            <i class="fas fa-tshirt shirt-icon" th:style="'color: ' + ${variation.color.name.toLowerCase()}"></i>
+                            <span th:text="${#strings.capitalize(variation.size.name)}"></span>: <span th:text="${variation.quantity}"></span>
+                        </span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <!-- Calculate total quantity for the product -->
+                <td>
+                  <span th:text="${productTotalQuantities.get(product.id)}"></span>
+                </td>
+
+              </tr>
+              <!-- More product rows -->
+              </tbody>
+            </table>
+          </div>
+          </div><!-- row -->
+
+          <div class="mg-b-20"></div>
+
+        </div><!-- az-profile-body -->
+      </div><!-- az-content-body -->
+    </div><!-- container -->
+  </div><!-- az-content -->
+
+
+<div class="az-footer pd-b-10">
+  <div class="container">
+    <span style="text-align:center;">&copy; 2024 Inventory Management System</span>
+  </div><!-- container -->
+</div><!-- az-footer -->
+
+
+<script src="jquery/jquery.min.js"></script>
+<script src="js/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="js/ionicons/ionicons.js"></script>
+
+<script src="js/azia.js"></script>
+
+</body>
+</html>

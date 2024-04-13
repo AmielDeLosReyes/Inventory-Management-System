@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90680653-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90680653-2');
+    </script>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Meta -->
+    <meta name="description" content="Responsive Bootstrap 5 Dashboard Template">
+    <meta name="author" content="BootstrapDash">
+
+    <title>D'Baesic Apparel - Edit Profile</title>
+
+    <!-- vendor css -->
+    <link href="css/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="css/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="css/typicons.font/typicons.css" rel="stylesheet">
+
+    <!-- azia CSS -->
+    <link rel="stylesheet" href="css/azia.css">
+
+</head>
+<body>
+<div class="az-header">
+    <div class="container">
+        <div class="az-header-left">
+            <a href="/" class="az-logo"><span></span>D'Baesic Apparel</a>
+            <a href="" id="azMenuShow" class="az-header-menu-icon d-lg-none"><span></span></a>
+        </div><!-- az-header-left -->
+        <div class="az-header-menu">
+            <div class="az-header-menu-header">
+                <a href="/" class="az-logo"><span></span>D'Baesic Apparel</a>
+                <a href="" class="close">&times;</a>
+            </div><!-- az-header-menu-header -->
+            <ul class="nav">
+                <li class="nav-item active show">
+                    <a href="/" class="nav-link"><i class="typcn typcn-home-outline"></i> Dashboard</a>
+
+                </li>
+                <li class="nav-item">
+                    <a href="products" class="nav-link"><i class="fas fa-tshirt"></i> &nbsp;&nbsp;Products</a>
+
+                </li>
+                <li class="nav-item">
+                    <a href="sales-report" class="nav-link"><i class="typcn typcn-news"></i> Sales Report</a>
+
+                </li>
+
+            </ul>
+        </div><!-- az-header-menu -->
+        <div class="az-header-right">
+
+            <div class="dropdown az-profile-menu">
+                <a href="" class="az-img-user"><img src="default.png" alt=""></a>
+                <div class="dropdown-menu">
+                    <div class="az-dropdown-header d-sm-none">
+                        <a href="" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
+                    </div>
+                    <div class="az-header-profile">
+                        <div class="az-img-user">
+                            <img src="default.png" alt="">
+                        </div><!-- az-img-user -->
+                        <h6></h6>
+                        <span>Premium Member</span>
+                    </div><!-- az-header-profile -->
+
+                    <a href="" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a>
+                    <a href="" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
+                    <!--          <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>-->
+                    <!--          <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>-->
+                    <a href="/logout" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+                </div><!-- dropdown-menu -->
+            </div>
+        </div><!-- az-header-right -->
+    </div><!-- container -->
+</div><!-- az-header -->
+
+
+<div class="az-content pd-y-20 pd-lg-y-30 pd-xl-y-40">
+    <div class="container">
+        <div class="az-content-body pd-lg-l-40 d-flex flex-column">
+
+            <h2 class="az-content-title">Edit Profile</h2>
+
+            <!-- START OF THE INPUTS -->
+
+            <!-- FORM FOR INPUTS -->
+            <form method="POST" th:action="@{/updateUserDetails}" enctype="multipart/form-data" data-parsley-validate>
+
+                <!-- Start of inputs -->
+                <div class="az-content-label mg-b-5">Name <span class="tx-danger">*</span></div>
+
+                <!-- Last Name and First Name -->
+                <div class="row row-sm">
+                    <div class="col-lg">
+                        <input class="form-control" placeholder="Full Name" type="text" name="fullName" th:value="${authenticatedUser.fullName}" required>
+                    </div><!-- col -->
+                </div><!-- row -->
+
+                <hr class="mg-y-30">
+
+                <!-- Start of inputs -->
+                <div class="az-content-label mg-b-5">Username <span class="tx-danger">*</span></div>
+
+                <!-- Last Name and First Name -->
+                <div class="row row-sm">
+                    <div class="col-lg">
+                        <input class="form-control" placeholder="Username" type="text" name="username" th:value="${authenticatedUser.username}" required>
+                    </div><!-- col -->
+                </div><!-- row -->
+
+
+<!--                &lt;!&ndash; Contact Number &ndash;&gt;-->
+<!--                <div class="az-content-label mg-b-5">Contact Number</div>-->
+
+<!--                <div class="row row-sm wd-400">-->
+<!--                    <div class="col-lg mg-t-10 mg-lg-t-0">-->
+<!--                        <input id="phoneMask" class="form-control" placeholder="(000) 000-0000" type="text" name="contactNum">-->
+<!--                    </div>&lt;!&ndash; col &ndash;&gt;-->
+<!--                </div>&lt;!&ndash; row &ndash;&gt;-->
+
+                <hr class="mg-y-30">
+
+                <!-- Email Address -->
+                <div class="az-content-label mg-b-5">Email Address</div>
+
+                <div class="row row-sm wd-400">
+                    <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <input class="form-control" placeholder="Email Address" type="email" name="email" th:value="${authenticatedUser.email}">
+
+                    </div><!-- col -->
+                </div><!-- row -->
+
+                <hr class="mg-y-30">
+
+<!--                &lt;!&ndash; Current Address &ndash;&gt;-->
+<!--                <div class="az-content-label mg-b-5">Current Address</div>-->
+
+<!--                <div class="row row-sm mg-t-20">-->
+<!--                    <div class="col-lg">-->
+<!--                        <textarea name ="address" rows="3" class="form-control" placeholder="Current Address"></textarea>-->
+<!--                    </div>&lt;!&ndash; col &ndash;&gt;-->
+<!--                </div>&lt;!&ndash; row &ndash;&gt;-->
+
+<!--                <hr class="mg-y-30">-->
+
+<!--                &lt;!&ndash; Gender &ndash;&gt;-->
+<!--                <div class="az-content-label mg-b-5">Gender <span class="tx-danger">*</span></div>-->
+<!--                <div class="row row-sm mg-t-20 wd-300">-->
+<!--                    <div id="genderWrapper" class="parsley-select col-lg">-->
+<!--                        <select name="gender" class="form-control select2-no-search" data-parsley-class-handler="#genderWrapper" data-parsley-errors-container="#genderErrorContainer" required>-->
+<!--                            <option label="Choose one"></option>-->
+<!--                            <option value="MALE">Male</option>-->
+<!--                            <option value="FEMALE">Female</option>-->
+<!--                        </select>-->
+<!--                        <div id="genderErrorContainer"></div>-->
+<!--                    </div>&lt;!&ndash; col &ndash;&gt;-->
+<!--                </div>&lt;!&ndash; row &ndash;&gt;-->
+
+<!--                <hr class="mg-y-30">-->
+
+<!--                &lt;!&ndash; Network &ndash;&gt;-->
+<!--                <div class="az-content-label mg-b-5">Network <span class="tx-danger">*</span></div>-->
+<!--                <div class="row row-sm mg-t-20 wd-450">-->
+<!--                    <div id="networkWrapper" class="parsley-select col-lg">-->
+<!--                        <select name="network" class="form-control select2-no-search" data-parsley-class-handler="#networkWrapper" data-parsley-errors-container="#networkErrorContainer" required>-->
+<!--                            <option label="Choose one"></option>-->
+<!--                            <option value="KIDDOS">Children (below 13 yrs. old)</option>-->
+<!--                            <option value="CYN">CYN (13 to 22 yrs. old)</option>-->
+<!--                            <option value="YAN">YAN (23 to 29 yrs. old)</option>-->
+<!--                            <option value="MEN">Men (Adult Men, 30 yrs. old and above)</option>-->
+<!--                            <option value="WOMEN">Women (Adult Women, 30 yrs. old and above)</option>-->
+<!--                        </select>-->
+<!--                        <div id="networkErrorContainer"></div>-->
+<!--                    </div>&lt;!&ndash; col &ndash;&gt;-->
+<!--                </div>&lt;!&ndash; row &ndash;&gt;-->
+
+<!--                <hr class="mg-y-30">-->
+
+<!--                &lt;!&ndash; Birth Date &ndash;&gt;-->
+<!--                <div class="az-content-label mg-b-5">Birth Date</div>-->
+
+<!--                <div class="row row-sm">-->
+<!--                    <div class="col-lg-3">-->
+<!--                        <div class="input-group">-->
+<!--                            <div class="input-group-prepend">-->
+<!--                            </div>-->
+<!--                            <input id="dateMask" type="text" class="form-control" placeholder="MM/DD/YYYY">-->
+<!--                        </div>&lt;!&ndash; input-group &ndash;&gt;-->
+<!--                    </div>&lt;!&ndash; col-4 &ndash;&gt;-->
+
+                    <hr class="mg-y-30">
+
+                    <!-- Display Picture -->
+                    <div class="az-content-label mg-b-5">Profile Picture</div>
+                    <p class="mg-b-20">Not choosing a picture will display a default profile picture.</p>
+
+                    <div class="row row-sm">
+                        <div class="col-sm-7 col-md-6 col-lg-4">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile" name="profilePicture">
+                            </div> <!-- custom-file -->
+                        </div><!-- col -->
+                    </div><!-- row -->
+
+<!--                    <hr class="mg-y-30">-->
+
+<!--                    &lt;!&ndash; QR Code &ndash;&gt;-->
+<!--                    <div class="az-content-label mg-b-5">QR Code</div>-->
+<!--                    <p class="mg-b-20">QR Code is generated for the Member ID. You have the option to send it right away.</p>-->
+
+<!--                    <div class="row row-sm mg-t-20 wd-450">-->
+<!--                        <div class="">-->
+<!--                            <label class="ckbox">-->
+<!--                                <input type="checkbox" name="shouldSendQR"><span>Send the QR Code to the Email Address provided.</span>-->
+<!--                            </label>-->
+<!--                        </div>&lt;!&ndash; col &ndash;&gt;-->
+<!--                    </div>&lt;!&ndash; row &ndash;&gt;-->
+
+                    <hr class="mg-y-30">
+
+                    <div class="col-lg-4">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button class="btn btn-az-secondary pd-x-25 active">Submit</button>
+                            <a href="#" class="btn btn-outline-light pd-x-25">Cancel</a>
+                        </div> <!-- btn-group -->
+                    </div><!-- col-lg-4 -->
+
+                    <div class="ht-40"></div>
+            </form>
+            <!-- End of form -->
+
+        </div> <!-- container -->
+    </div> <!-- az-content -->
+</div>
+
+<div class="az-footer pd-b-10">
+    <div class="container">
+        <span style="text-align:center;">&copy; 2024 Inventory Management System</span>
+    </div><!-- container -->
+</div><!-- az-footer -->
+
+
+<script src="jquery/jquery.min.js"></script>
+<script src="js/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="js/ionicons/ionicons.js"></script>
+
+<script src="js/azia.js"></script>
+
+</body>
+</html>

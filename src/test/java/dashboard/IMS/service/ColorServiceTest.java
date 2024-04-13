@@ -1,7 +1,4 @@
 package dashboard.IMS.service;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 import dashboard.IMS.entity.Color;
 import dashboard.IMS.repository.ColorRepository;
@@ -11,91 +8,90 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the ColorService class.
+ * These tests validate the behavior of ColorService methods.
+ * Mocking is used to isolate the class under test and focus on its logic independently.
  *
  * Author: Amiel De Los Reyes
- * Date: 03/04/2024
+ * Date: 02/20/2024
  */
 public class ColorServiceTest {
-
-    @Mock
-    private ColorRepository colorRepository;
 
     @InjectMocks
     private ColorService colorService;
 
+    @Mock
+    private ColorRepository colorRepository;
+
+    /**
+     * Initialize mocks before each test method execution.
+     */
     @BeforeEach
-    void setUp() {
-        // Initialize mocks before each test
-        MockitoAnnotations.initMocks(this);
+    public void init() {
+        MockitoAnnotations.openMocks(this);
     }
 
     /**
-     * Test case to verify saving a color in the database.
+     * Test case for retrieving all colors.
+     * Verifies that the correct number of colors is returned.
      */
     @Test
-    void testSaveColor() {
-        // Arrange
+    public void testGetAllColors() {
+        when(colorRepository.findAll()).thenReturn(Arrays.asList(new Color(), new Color()));
+        assertEquals(2, colorService.getAllColors().size());
+        verify(colorRepository, times(1)).findAll();
+    }
+
+    /**
+     * Test case for retrieving a color by its ID.
+     * Verifies that the correct color is returned when it exists.
+     */
+    @Test
+    public void testGetColorById() {
         Color color = new Color();
-        when(colorRepository.save(any())).thenReturn(color);
-
-        // Act
-        Color result = colorService.saveColor(color);
-
-        // Assert
-        assertNotNull(result);
+        when(colorRepository.findById(1)).thenReturn(Optional.of(color));
+        assertEquals(color, colorService.getColorById(1));
+        verify(colorRepository, times(1)).findById(1);
     }
 
     /**
-     * Test case to verify retrieving all colors from the database.
+     * Test case for retrieving a color by its ID when it does not exist.
+     * Verifies that null is returned when the color is not found.
      */
     @Test
-    void testGetAllColors() {
-        // Arrange
-        List<Color> colorList = new ArrayList<>();
-        colorList.add(new Color());
-        colorList.add(new Color());
-        when(colorRepository.findAll()).thenReturn(colorList);
-
-        // Act
-        List<Color> result = colorService.getAllColors();
-
-        // Assert
-        assertEquals(2, result.size());
+    public void testGetColorByIdNotFound() {
+        when(colorRepository.findById(1)).thenReturn(Optional.empty());
+        assertNull(colorService.getColorById(1));
+        verify(colorRepository, times(1)).findById(1);
     }
 
     /**
-     * Test case to verify retrieving a color by its ID from the database.
+     * Test case for saving a color.
+     * Verifies that the saved color is returned.
      */
     @Test
-    void testGetColorById() {
-        // Arrange
+    public void testSaveColor() {
         Color color = new Color();
-        color.setId(1);
-        when(colorRepository.findById(1)).thenReturn(java.util.Optional.of(color));
-
-        // Act
-        Color result = colorService.getColorById(1);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.getId());
+        when(colorRepository.save(color)).thenReturn(color);
+        assertEquals(color, colorService.saveColor(color));
+        verify(colorRepository, times(1)).save(color);
     }
 
     /**
-     * Test case to verify deleting a color by its ID from the database.
+     * Test case for deleting a color by its ID.
+     * Verifies that the color deletion is invoked with the correct ID.
      */
     @Test
-    void testDeleteColorById() {
-        // Act
+    public void testDeleteColorById() {
         colorService.deleteColorById(1);
-
-        // Assert
         verify(colorRepository, times(1)).deleteById(1);
     }
 }
-

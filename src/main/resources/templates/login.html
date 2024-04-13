@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90680653-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-90680653-2');
+    </script>
+    
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Meta -->
+    <meta name="description" content="Responsive Bootstrap 5 Dashboard Template">
+    <meta name="author" content="BootstrapDash">
+
+    <title>Inventory Management System - Login</title>
+
+    <!-- vendor css -->
+    <link href="css/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="css/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="css/typicons.font/typicons.css" rel="stylesheet">
+
+    <!-- azia CSS -->
+    <link rel="stylesheet" href="css/azia.css">
+
+  </head>
+  <body class="az-body">
+
+    <div class="az-signin-wrapper">
+      <div class="az-card-signin">
+        <h1 class="az-logo">Inventory Management System</h1>
+        <div class="az-signin-header">
+          <h2>Welcome back!</h2>
+          <h4>Please sign in to continue</h4>
+          <!-- Failure Alert -->
+          <div th:if="${error != null and messageType == 'failure'}" class="alert alert-danger alert-dismissible fade show" role="alert" id="failureAlert">
+            <strong>Failed!</strong> <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- End Alert -->
+
+          <form action="/login" method="post"> <!-- Updated form action -->
+            <div class="form-group">
+              <label>Email</label>
+              <input type="text" class="form-control" placeholder="Enter your email" name="username"> <!-- Added name attribute -->
+            </div><!-- form-group -->
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" class="form-control" placeholder="Enter your password" name="password"> <!-- Added name attribute -->
+            </div><!-- form-group -->
+            <button type="submit" class="btn btn-az-primary btn-block">Sign In</button> <!-- Changed button type to submit -->
+          </form>
+
+        </div><!-- az-signin-header -->
+        <div class="az-signin-footer">
+          <p><a href="">Forgot password?</a></p>
+          <p>Don't have an account? <a href="/signup">Create an Account</a></p>
+        </div><!-- az-signin-footer -->
+      </div><!-- az-card-signin -->
+    </div><!-- az-signin-wrapper -->
+
+
+    
+    <script src="jquery/jquery.min.js"></script>
+    <script src="js/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/ionicons/ionicons.js"></script>
+
+    <script src="js/azia.js"></script>
+    <script>
+      $(function(){
+        'use strict'
+
+      });
+    </script>
+  </body>
+</html>
